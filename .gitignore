@@ -147,3 +147,4 @@ data/
 
 # Impeccable review captures
 .impeccable/review/
+.vercel
