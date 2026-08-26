@@ -1,0 +1,18 @@
+# One-command self-hosting: cp .env.example .env, add your key pair, then
+#   docker compose up --build
+# On Linux, run `mkdir -p data` first so the volume is owned by your user.
+# The container runs as the unprivileged node user (uid 1000).
+
+services:
+  hixfield:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      DATA_DIR: /app/data
+    volumes:
+      # The job database and every downloaded asset. Upstream URLs expire in
+      # about 7 days, so this volume is the library's source of truth.
+      - ./data:/app/data
+    restart: unless-stopped

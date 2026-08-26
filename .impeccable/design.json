@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-26T00:00:00Z",
+  "title": "Design System: Hixfield",
+  "extensions": {
+    "colorMeta": {
+      "lime-400": { "role": "primary", "displayName": "Signal Lime", "canonical": "#ccff00", "tonalRamp": ["#1a2200", "#3a4d00", "#5d7c00", "#9dc400", "#ccff00", "#dbff4d", "#e7ff85", "#f3ffc2"] },
+      "lime-300": { "role": "primary", "displayName": "Signal Lime Hover", "canonical": "#dbff4d", "tonalRamp": ["#1a2200", "#3a4d00", "#5d7c00", "#9dc400", "#ccff00", "#dbff4d", "#e7ff85", "#f3ffc2"] },
+      "lime-600": { "role": "primary", "displayName": "Worn Lime", "canonical": "#9dc400", "tonalRamp": ["#1a2200", "#3a4d00", "#5d7c00", "#9dc400", "#ccff00", "#dbff4d", "#e7ff85", "#f3ffc2"] },
+      "ink-950": { "role": "neutral", "displayName": "Stage Black", "canonical": "#09090b", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "ink-900": { "role": "neutral", "displayName": "Panel Black", "canonical": "#0e0e11", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "ink-850": { "role": "neutral", "displayName": "Well Black", "canonical": "#121216", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "ink-800": { "role": "neutral", "displayName": "Raised Black", "canonical": "#17171d", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "ink-700": { "role": "neutral", "displayName": "Hairline", "canonical": "#26262e", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "ink-600": { "role": "neutral", "displayName": "Hairline Hover", "canonical": "#34343e", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "ink-400": { "role": "neutral", "displayName": "Dim Meta", "canonical": "#71717e", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "ink-300": { "role": "neutral", "displayName": "Secondary Text", "canonical": "#9c9ca8", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "ink-100": { "role": "neutral", "displayName": "Bright Text", "canonical": "#e9e9ec", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "ink-50": { "role": "neutral", "displayName": "Paper White", "canonical": "#f5f5f7", "tonalRamp": ["#09090b", "#121216", "#17171d", "#26262e", "#34343e", "#71717e", "#9c9ca8", "#e9e9ec"] },
+      "amber": { "role": "status", "displayName": "Render Amber", "canonical": "#ffc24d", "tonalRamp": ["#2b1d00", "#553a00", "#8a5f00", "#c28900", "#eaa927", "#ffc24d", "#ffd685", "#ffe9c2"] },
+      "danger": { "role": "status", "displayName": "Fail Red", "canonical": "#ff6161", "tonalRamp": ["#2b0808", "#571212", "#8c1f1f", "#c23434", "#e94b4b", "#ff6161", "#ff9494", "#ffc9c9"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The HIXFIELD wordmark-as-hero on the landing; Archivo's wdth axis at 125% is what makes it loud." },
+      "headline": { "displayName": "Headline", "purpose": "Landing section headings; 1.875rem stepping to 2.25rem at the sm breakpoint." },
+      "title": { "displayName": "Title", "purpose": "Studio page titles; 1.5rem stepping to 1.875rem at sm." },
+      "body": { "displayName": "Body", "purpose": "Panel copy in ink-300; prose over media scrims in ink-100." },
+      "label": { "displayName": "Label", "purpose": "Form-field labels, help, and error lines at 13px." },
+      "data": { "displayName": "Data (mono)", "purpose": "Machine truth only: timecodes, seeds, credits, job ids, statuses, commands. Tabular figures enforced globally." }
+    },
+    "shadows": [
+      { "name": "signal-glow", "value": "0 2px 12px rgba(204,255,0,0.15)", "purpose": "Emissive halo under lime primary buttons; the accent glows, surfaces do not cast." },
+      { "name": "console-drop", "value": "0 16px 48px rgba(9,9,11,0.35)", "purpose": "The landing terminal block floating on the page-scale lime section — the one dark-on-bright surface." },
+      { "name": "thumb-shadow", "value": "0 1px 6px rgba(0,0,0,0.6)", "purpose": "Grounds the 5x18px playhead thumb on its 3px track." }
+    ],
+    "motion": [
+      { "name": "rise", "value": "hx-rise 0.65s cubic-bezier(0.16, 1, 0.3, 1) both; staggers rise-1..rise-5 at 60ms steps", "purpose": "The one authored entrance per page: content rises 14px into place." },
+      { "name": "lamp", "value": "hx-lamp 1.6s ease-in-out infinite (opacity 1 -> 0.35 -> 1)", "purpose": "Recording-lamp pulse on status dots for jobs in flight and unresolved setup." },
+      { "name": "hover-scale", "value": "transform 500ms; scale(1.03)", "purpose": "Preset-card video drift while hover-playing." },
+      { "name": "press", "value": "active:translateY(1px)", "purpose": "1px physical press on filled buttons." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Signal Lime action with an emissive glow and a 1px press.",
+      "html": "<button class=\"ds-btn-primary\">Generate video</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border: none; border-radius: 8px; background: var(--color-lime-400, #ccff00); color: var(--color-ink-950, #09090b); font-family: Archivo, system-ui, sans-serif; font-size: 14px; font-weight: 600; box-shadow: 0 2px 12px rgba(204,255,0,0.15); cursor: pointer; transition: background-color 0.15s; } .ds-btn-primary:hover { background: var(--color-lime-300, #dbff4d); } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-lime-400, #ccff00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Primary Button (Off)",
+      "kind": "button",
+      "refersTo": "button-primary-off",
+      "description": "The Explicit-Off Rule: a disabled primary re-renders as off, never as dimmed lime.",
+      "html": "<button class=\"ds-btn-primary-off\" disabled>Generate video</button>",
+      "css": ".ds-btn-primary-off { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; border: 1px solid var(--color-ink-700, #26262e); border-radius: 8px; background: var(--color-ink-800, #17171d); color: var(--color-ink-400, #71717e); font-family: Archivo, system-ui, sans-serif; font-size: 14px; font-weight: 600; pointer-events: none; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Raised-ink action with a hairline that brightens on hover.",
+      "html": "<button class=\"ds-btn-secondary\">Rerun job</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border: 1px solid var(--color-ink-700, #26262e); border-radius: 8px; background: var(--color-ink-800, #17171d); color: var(--color-ink-50, #f5f5f7); font-family: Archivo, system-ui, sans-serif; font-size: 14px; cursor: pointer; transition: border-color 0.15s, background-color 0.15s; } .ds-btn-secondary:hover { border-color: var(--color-ink-600, #34343e); background: rgba(38,38,46,0.6); } .ds-btn-secondary:active { transform: translateY(1px); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--color-lime-400, #ccff00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Panel-ink field; focus shifts the hairline toward lime, caret is lime.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Describe the shot…\" />",
+      "css": ".ds-input { width: 100%; height: 40px; padding: 0 14px; border: 1px solid var(--color-ink-700, #26262e); border-radius: 8px; background: var(--color-ink-900, #0e0e11); color: var(--color-ink-50, #f5f5f7); font-family: Archivo, system-ui, sans-serif; font-size: 14px; caret-color: var(--color-lime-400, #ccff00); transition: border-color 0.15s; } .ds-input::placeholder { color: var(--color-ink-400, #71717e); } .ds-input:hover { border-color: var(--color-ink-600, #34343e); } .ds-input:focus { border-color: rgba(204,255,0,0.7); outline: none; }"
+    },
+    {
+      "name": "Playhead Slider",
+      "kind": "custom",
+      "refersTo": "hx-range",
+      "description": "Strength control styled as a timeline playhead: worn-lime fill, rectangular lime thumb, mono readout.",
+      "html": "<div class=\"ds-slider-row\"><span class=\"ds-slider-label\">Strength</span><input class=\"ds-hx-range\" type=\"range\" min=\"0\" max=\"1\" step=\"0.05\" value=\"0.8\" style=\"--range-track: linear-gradient(to right, #9dc400 80%, #26262e 80%);\" /><span class=\"ds-slider-value\">0.80</span></div>",
+      "css": ".ds-slider-row { display: flex; align-items: center; gap: 12px; min-width: 260px; } .ds-slider-label { font-family: Archivo, system-ui, sans-serif; font-size: 13px; color: var(--color-ink-300, #9c9ca8); white-space: nowrap; } .ds-slider-value { font-family: 'Spline Sans Mono', ui-monospace, monospace; font-size: 12px; color: var(--color-ink-300, #9c9ca8); font-variant-numeric: tabular-nums; width: 40px; text-align: right; } .ds-hx-range { appearance: none; -webkit-appearance: none; flex: 1; height: 20px; background: transparent; cursor: pointer; } .ds-hx-range::-webkit-slider-runnable-track { height: 3px; border-radius: 2px; background: var(--range-track, var(--color-ink-700, #26262e)); } .ds-hx-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 5px; height: 18px; border-radius: 2px; background: var(--color-lime-400, #ccff00); margin-top: -7.5px; box-shadow: 0 1px 6px rgba(0,0,0,0.6); } .ds-hx-range::-moz-range-track { height: 3px; border-radius: 2px; background: var(--range-track, var(--color-ink-700, #26262e)); } .ds-hx-range::-moz-range-thumb { width: 5px; height: 18px; border: none; border-radius: 2px; background: var(--color-lime-400, #ccff00); box-shadow: 0 1px 6px rgba(0,0,0,0.6); }"
+    },
+    {
+      "name": "Switch",
+      "kind": "custom",
+      "refersTo": "switch",
+      "description": "Lime track with an ink knob when on; hairline-ink track when off.",
+      "html": "<button class=\"ds-switch\" role=\"switch\" aria-checked=\"true\"><span class=\"ds-switch-track ds-on\"><span class=\"ds-switch-knob\"></span></span><span class=\"ds-switch-label\">Enhance prompt</span></button>",
+      "css": ".ds-switch { display: inline-flex; align-items: center; gap: 10px; background: none; border: none; cursor: pointer; padding: 0; } .ds-switch-track { position: relative; width: 36px; height: 20px; border-radius: 9999px; background: var(--color-ink-700, #26262e); transition: background-color 0.15s; flex-shrink: 0; } .ds-switch-track.ds-on { background: var(--color-lime-400, #ccff00); } .ds-switch-knob { position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; border-radius: 9999px; background: var(--color-ink-950, #09090b); transform: translateX(16px); box-shadow: 0 1px 2px rgba(0,0,0,0.4); transition: transform 0.15s; } .ds-switch-label { font-family: Archivo, system-ui, sans-serif; font-size: 13px; color: var(--color-ink-300, #9c9ca8); }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "segmented",
+      "description": "Exclusive picker; only the lime treatment reads as selected — hover stops short of white.",
+      "html": "<div class=\"ds-segmented\" role=\"radiogroup\"><button class=\"ds-seg-opt\" role=\"radio\" aria-checked=\"false\">Lite</button><button class=\"ds-seg-opt ds-seg-active\" role=\"radio\" aria-checked=\"true\">Standard</button><button class=\"ds-seg-opt\" role=\"radio\" aria-checked=\"false\">Turbo</button></div>",
+      "css": ".ds-segmented { display: inline-flex; padding: 4px; border: 1px solid var(--color-ink-700, #26262e); border-radius: 8px; background: var(--color-ink-900, #0e0e11); } .ds-seg-opt { border: none; background: transparent; border-radius: 6px; padding: 6px 14px; font-family: Archivo, system-ui, sans-serif; font-size: 13px; color: var(--color-ink-300, #9c9ca8); cursor: pointer; transition: background-color 0.15s, color 0.15s; } .ds-seg-opt:hover { background: var(--color-ink-800, #17171d); color: var(--color-ink-100, #e9e9ec); } .ds-seg-opt.ds-seg-active { background: var(--color-ink-700, #26262e); color: var(--color-lime-400, #ccff00); font-weight: 500; }"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "status-badge",
+      "description": "Mono pill reporting job state; the dot runs the recording-lamp pulse while rendering.",
+      "html": "<span class=\"ds-status-badge\"><span class=\"ds-status-dot\"></span>Rendering</span>",
+      "css": "@keyframes ds-hx-lamp { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } } .ds-status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border: 1px solid rgba(255,194,77,0.3); border-radius: 9999px; background: rgba(255,194,77,0.1); color: var(--color-amber, #ffc24d); font-family: 'Spline Sans Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.025em; font-variant-numeric: tabular-nums; } .ds-status-dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--color-amber, #ffc24d); animation: ds-hx-lamp 1.6s ease-in-out infinite; }"
+    },
+    {
+      "name": "Preset Card (selected)",
+      "kind": "card",
+      "refersTo": "preset-card",
+      "description": "The signature component: a camera preset as a looping video tile. Selected state = lime ring + mono selection tag; caption on a gradient scrim.",
+      "html": "<button class=\"ds-preset-card ds-selected\" aria-pressed=\"true\"><span class=\"ds-preset-media\"><svg viewBox=\"0 0 24 24\" width=\"28\" height=\"28\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"m10 9 5 3-5 3z\" fill=\"currentColor\" stroke=\"none\"/></svg></span><span class=\"ds-preset-tag\">A</span><span class=\"ds-preset-caption\"><span class=\"ds-preset-name\">Crash Zoom</span><span class=\"ds-preset-desc\">Fast push toward the subject</span></span></button>",
+      "css": ".ds-preset-card { position: relative; display: block; width: 240px; padding: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--color-ink-700, #26262e); background: var(--color-ink-900, #0e0e11); text-align: left; cursor: pointer; transition: border-color 0.15s; } .ds-preset-card:hover { border-color: var(--color-ink-600, #34343e); } .ds-preset-card.ds-selected { border-color: var(--color-lime-400, #ccff00); box-shadow: 0 0 0 1px var(--color-lime-400, #ccff00); } .ds-preset-media { display: grid; place-items: center; aspect-ratio: 16 / 9; background: var(--color-ink-850, #121216); color: var(--color-ink-600, #34343e); } .ds-preset-tag { position: absolute; right: 8px; top: 8px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; background: var(--color-lime-400, #ccff00); color: var(--color-ink-950, #09090b); font-family: 'Spline Sans Mono', ui-monospace, monospace; font-size: 12px; font-weight: 700; } .ds-preset-caption { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; padding: 32px 12px 10px; background: linear-gradient(to top, rgba(9,9,11,0.95), rgba(9,9,11,0.6) 50%, transparent); } .ds-preset-name { font-family: Archivo, system-ui, sans-serif; font-size: 14px; font-weight: 500; color: var(--color-ink-50, #f5f5f7); } .ds-preset-desc { font-family: Archivo, system-ui, sans-serif; font-size: 12px; color: var(--color-ink-300, #9c9ca8); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Night Grading Suite",
+    "overview": "Hixfield is a color-grading room after hours: layered near-blacks under hairline borders, one lime signal, and a gallery of looping camera-motion previews doing the talking. The preset gallery IS the interface — the product's beauty is the catalog itself, so chrome recedes into flat ink panels and the generated media carries the visual weight. The system explicitly refuses the SaaS-dashboard arrangement: no stat cards, no hero metrics, no decorative gradients. Two voices speak. Archivo (a variable face with its width axis loaded) is the human voice — the wide-set HIXFIELD wordmark, headlines, prose, labels. Spline Sans Mono is the machine voice, reserved strictly for data: timecodes, elapsed seconds, seeds, credit costs, job ids, status labels, shell commands. Depth comes from ink layering, not shadows; life comes from the media (hover-play video tiles, a recording-lamp pulse on jobs in flight), not from ornament. There is exactly one theme. The root declares color-scheme: dark and no light palette exists anywhere in the build — this is a deliberate commitment to a single dark look, not an omission. Do not add a light mode.",
+    "keyCharacteristics": [
+      "Layered near-black surfaces (#09090b → #17171d) separated by 1px hairlines, never by shadows",
+      "One accent — lime #ccff00 — used as state in the studio, committed at page scale only once, on the landing",
+      "Two faces with a hard boundary: Archivo for language, Spline Sans Mono for data",
+      "Motion grammar of exactly two devices: the staggered rise entrance and the recording-lamp pulse",
+      "Media-first: preset cards are looping video tiles; text sits on gradient scrims over the footage"
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Lime is the only accent, and in the studio it only ever means state: selection, activity, the primary action, focus. It never decorates. Page-scale lime belongs to the Persuade surface (the landing's \"Run it tonight\" block) alone; no Operate surface floods it.", "section": "colors" },
+      { "name": "The Tinted-Status Rule", "body": "Status colors render as a 10% fill + 30% border + full-strength text and dot (text-amber border-amber/30 bg-amber/10), never as solid chips.", "section": "colors" },
+      { "name": "The Mono-Is-Data Rule", "body": "Spline Sans Mono is strictly for machine truth: timecodes and elapsed seconds, seeds, credit costs, job ids, status-badge labels, endpoint paths, selection tags (A/B), env vars and shell commands, provenance captions. It never sets a heading, a sentence of prose, or a button label.", "section": "typography" },
+      { "name": "The Width-Axis Rule", "body": "Archivo's wdth axis is the expressive range. The wordmark sets at font-stretch: 125% everywhere it appears (hero, nav, footer, sidebar); one landing headline uses 115%. Expression comes from width at these marquee moments — not from new faces, italics, or ultra weights.", "section": "typography" },
+      { "name": "The One-Entrance Rule", "body": "Each page gets exactly one authored entrance: the header block and its siblings ride animate-rise (0.65s, cubic-bezier(0.16, 1, 0.3, 1), 14px rise) with rise-1…rise-5 staggers at 60ms steps. Nothing else animates on load, and prefers-reduced-motion collapses all animation globally.", "section": "layout" },
+      { "name": "The Hairline Rule", "body": "Surfaces never cast shadows on the dark ground. Separation is a 1px ink-700 border plus a tonal step; the signal glow, the console drop, and the thumb shadow are the entire shadow vocabulary.", "section": "elevation" },
+      { "name": "The Recording-Lamp Rule", "body": "Work in flight pulses like a tally lamp: animate-lamp (1.6s ease-in-out, opacity 1 → 0.35 → 1) on a 6px status dot — rendering jobs, the missing-key chip, characters in training. Inline waits use the small stroke spinner instead; the lamp is reserved for live jobs and unresolved setup.", "section": "elevation" },
+      { "name": "The Explicit-Off Rule", "body": "A disabled primary is never a dimmed lime button: it re-renders as explicitly off — ink-800 fill, ink-700 border, ink-400 semibold text. Only non-primary variants use 50% opacity when disabled.", "section": "components" },
+      { "name": "The Lime-Ring Selection Rule", "body": "Selected = border-lime-400 plus a 1px lime ring, plus a 24px lime square at the top-right carrying the selection tag in mono (\"A\"/\"B\" when two motions stack). Unselected hover only brightens the hairline to ink-600 — hover never impersonates selection.", "section": "components" },
+      { "name": "The Empty-States-Teach Rule", "body": "Every empty state teaches the first run: one icon in lime at 80% opacity, a one-line title, at most one short body, one action — centered in a hairlined ink-900 panel.", "section": "components" }
+    ],
+    "dos": [
+      "Do build depth from the ink ladder (950 ground → 900 panel → 850 well → 800 raised) under 1px ink-700 hairlines that brighten to ink-600 on hover.",
+      "Do set every number and identifier — seconds, seeds, credits, job ids, statuses, commands — in Spline Sans Mono with tabular figures.",
+      "Do give each page exactly one entrance: animate-rise with rise-1…rise-5 staggers, and nothing else on load.",
+      "Do mark selection with the lime ring + mono tag, activity with the recording-lamp pulse, and a disabled primary as explicitly off (ink-800 fill, ink-400 text).",
+      "Do ship a same-name .json provenance sidecar (prompt + createdAt) beside every generated raster and clip in public/media/, and caption generated media honestly on the page.",
+      "Do put text over footage on a from-ink-950/95 gradient scrim, and honor prefers-reduced-motion (stills instead of loops; the global animation kill stays)."
+    ],
+    "donts": [
+      "Don't add a light theme — the build commits to a single dark look (color-scheme: dark) and defines no light palette.",
+      "Don't use lime decoratively in the studio; it means state (selection, active, primary action, focus). Page-scale lime exists only on the landing's closing block.",
+      "Don't arrange stat cards, hero metrics, or dashboard tiles — the world's founding refusal.",
+      "Don't cast drop shadows for separation; the only shadows are the lime CTA glow, the landing console drop, and the playhead-thumb shadow.",
+      "Don't introduce radii beyond 6 / 8 / 12px / full, a second accent hue, or a third typeface."
+    ]
+  }
+}
