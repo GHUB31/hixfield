@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Hixfield local data: job DB + downloaded generation assets
+data/
+
+# Impeccable review captures
+.impeccable/review/
+.vercel
