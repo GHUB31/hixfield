@@ -124,6 +124,8 @@ export interface Motion {
   name: string;
   description?: string;
   preview_url?: string;
+  poster_url?: string;
+  category?: string;
   start_end_frame?: boolean;
 }
 
@@ -132,6 +134,7 @@ export interface SoulStyle {
   name: string;
   description?: string;
   preview_url?: string;
+  category?: string;
 }
 
 export interface CharacterRecord {

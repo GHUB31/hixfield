@@ -117,28 +117,44 @@ export class LocalMotionProviderAdapter implements CreativeProviderAdapter {
 
     try {
       if (input.task === "t2i") {
-        // Generate a crisp 1280x720 dark-cinema storyboard plate with ffmpeg
+        // Composite a crisp 1280x720 dark-cinema editorial plate from local studio stills
         const outPath = path.join(outDir, "0.png");
-        const colorHex =
-          (typeof input.params.seed === "number" ? input.params.seed : input.jobId.charCodeAt(0)) % 2 === 0
-            ? "0x121216"
-            : "0x17171d";
-        const proc = spawnSync(
-          "ffmpeg",
-          [
-            "-y",
-            "-f",
-            "lavfi",
-            "-i",
-            `color=c=${colorHex}:s=1280x720:d=1`,
-            "-vf",
-            "geq=r='clip(r(X,Y)+18*sin(X/90)*cos(Y/70),0,255)':g='clip(g(X,Y)+22*sin((X+Y)/120),0,255)':b='clip(b(X,Y)+14*cos(X/80),0,255)'",
-            "-frames:v",
-            "1",
-            outPath,
-          ],
-          { timeout: 30_000 }
-        );
+        const plates = [
+          "hero-soundstage.webp",
+          "hall-wide.webp",
+          "lens-macro.webp",
+          "gallery-neon.webp",
+          "gallery-luxury.webp",
+        ];
+        const idx =
+          Math.abs(
+            typeof input.params.seed === "number" ? input.params.seed : input.jobId.charCodeAt(0)
+          ) % plates.length;
+        const platePath = path.resolve(process.cwd(), "public", "media", plates[idx]);
+
+        const args = fs.existsSync(platePath)
+          ? [
+              "-y",
+              "-i",
+              platePath,
+              "-vf",
+              "scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720,eq=contrast=1.06:saturation=1.04,vignette=PI/5",
+              "-frames:v",
+              "1",
+              outPath,
+            ]
+          : [
+              "-y",
+              "-f",
+              "lavfi",
+              "-i",
+              "color=c=0x121216:s=1280x720:d=1",
+              "-frames:v",
+              "1",
+              outPath,
+            ];
+
+        const proc = spawnSync("ffmpeg", args, { timeout: 30_000 });
         if (proc.status !== 0 || !fs.existsSync(outPath)) {
           throw new Error(`ffmpeg plate render failed: ${proc.stderr?.toString().slice(-300) ?? ""}`);
         }

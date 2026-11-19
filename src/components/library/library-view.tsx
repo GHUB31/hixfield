@@ -6,7 +6,7 @@ import { FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/field";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getJSON } from "@/lib/fetcher";
+import { getJSON, postJSON } from "@/lib/fetcher";
 import {
   isTerminalStatus,
   type JobKind,
@@ -41,6 +41,7 @@ export function LibraryView() {
   const [jobs, setJobs] = useState<JobRecord[] | null>(null);
   const [total, setTotal] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [queuedNotice, setQueuedNotice] = useState<string | null>(null);
   const [kindFilter, setKindFilter] = useState<JobKind | "">("");
   const [statusFilter, setStatusFilter] = useState<JobStatus | "">("");
   const [openId, setOpenId] = useState<string | null>(null);
@@ -69,7 +70,6 @@ export function LibraryView() {
         if (!silent) {
           setError(err instanceof Error ? err.message : "The request failed.");
         }
-        // Silent refresh errors are transient; the next tick retries.
       }
     },
     [query]
@@ -79,8 +79,6 @@ export function LibraryView() {
     void load(false);
   }, [load]);
 
-  // While any listed job is still running, refresh every 3 seconds.
-  // Each refresh also lets the server push locally queued jobs upstream.
   const hasActive = useMemo(
     () => (jobs ?? []).some((j) => !isTerminalStatus(j.status)),
     [jobs]
@@ -92,20 +90,49 @@ export function LibraryView() {
     return () => clearInterval(timer);
   }, [hasActive, load]);
 
+  async function queuePublishFromJob(job: JobRecord) {
+    const first = job.assets[0];
+    if (!first) return;
+    try {
+      const prompt = typeof job.params.prompt === "string" ? job.params.prompt : "Vyolab render";
+      await postJSON("/api/publish", {
+        jobId: job.id,
+        campaignId: job.campaignId ?? null,
+        platform: first.type === "video" ? "tiktok" : "instagram",
+        caption: prompt,
+        hashtags: ["vyolab", "aicreative"],
+        mediaPaths: [first.path],
+      });
+      setQueuedNotice("Added render to Publish approval queue (pending_approval).");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to queue for Postiz.");
+    }
+  }
+
   const openJob = jobs?.find((j) => j.id === openId) ?? null;
   const unfiltered = kindFilter === "" && statusFilter === "";
 
   return (
     <div className="animate-rise">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Library</h1>
-        <p className="mt-1 text-sm text-ink-300">
-          Every job you run, stored locally. Outputs survive the API&apos;s 7-day link
-          expiry.
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Library</h1>
+          <p className="mt-1 text-sm text-ink-300">
+            Every render saved locally to disk. Hover videos to preview, animate stills into video,
+            or queue directly for Postiz approval.
+          </p>
+        </div>
+        {queuedNotice && (
+          <p className="font-mono text-xs text-lime-400">
+            {queuedNotice}{" "}
+            <Link href="/publish" className="underline">
+              Review in Publish →
+            </Link>
+          </p>
+        )}
       </header>
 
-      <div className="animate-rise rise-1 mt-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="animate-rise rise-1 mt-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div role="group" aria-label="Filter by kind" className="flex flex-wrap gap-2">
           {KIND_FILTERS.map((opt) => {
             const active = opt.value === kindFilter;
@@ -162,11 +189,11 @@ export function LibraryView() {
             </Button>
           </div>
         ) : jobs === null ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="overflow-hidden rounded-xl border border-ink-700 bg-ink-900"
+                className="overflow-hidden rounded-xl border border-ink-800 bg-ink-900"
               >
                 <div className="aspect-video animate-pulse bg-ink-850" />
                 <div className="space-y-2 px-3 py-2.5">
@@ -181,19 +208,14 @@ export function LibraryView() {
             <EmptyState
               icon={<FolderOpen />}
               title="Your first render lands here"
-              body="Everything you generate is saved to this machine, with the exact parameters, so you can rerun or download it any time."
+              body="Everything you generate is saved to this machine, with the exact parameters, so you can animate, publish, or download it any time."
               action={
-                <div className="flex flex-col items-center gap-4">
-                  <p className="font-mono text-xs tracking-wide text-ink-400">
-                    00:00:00:00 · 0 cr
-                  </p>
-                  <Link
-                    href="/create/video"
-                    className="inline-flex h-10 items-center justify-center rounded-lg bg-lime-400 px-4 text-sm font-semibold text-ink-950 shadow-[0_2px_12px_rgba(204,255,0,0.15)] transition-colors hover:bg-lime-300 active:translate-y-px"
-                  >
-                    Create a video
-                  </Link>
-                </div>
+                <Link
+                  href="/create/video"
+                  className="inline-flex h-10 items-center justify-center rounded-lg bg-lime-400 px-4 text-sm font-semibold text-ink-950 shadow-[0_2px_12px_rgba(204,255,0,0.15)] transition-colors hover:bg-lime-300"
+                >
+                  Create a video
+                </Link>
               }
             />
           ) : (
@@ -202,9 +224,14 @@ export function LibraryView() {
             </p>
           )
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {jobs.map((job) => (
-              <JobCard key={job.id} job={job} onOpen={() => setOpenId(job.id)} />
+              <JobCard
+                key={job.id}
+                job={job}
+                onOpen={() => setOpenId(job.id)}
+                onQueuePublish={(j) => void queuePublishFromJob(j)}
+              />
             ))}
           </div>
         )}

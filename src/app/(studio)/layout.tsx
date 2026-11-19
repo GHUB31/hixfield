@@ -1,12 +1,10 @@
 import { StudioNav } from "@/components/studio-nav";
-import { KeysBanner } from "@/components/keys-banner";
 
 export default function StudioLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-dvh lg:pl-56">
+    <div className="min-h-dvh bg-[#060608]">
       <StudioNav />
-      <main className="mx-auto max-w-6xl px-4 pb-28 pt-6 sm:px-6 lg:px-10 lg:pb-16 lg:pt-10">
-        <KeysBanner />
+      <main className="mx-auto max-w-[1440px] px-4 pb-36 pt-6 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>

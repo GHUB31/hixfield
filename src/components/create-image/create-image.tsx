@@ -1,12 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, ImageIcon, KeyRound, Search } from "lucide-react";
+import Link from "next/link";
+import { Clapperboard, Download, ImageIcon, Search, Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Field, Input, Select, Textarea } from "@/components/ui/field";
-import { Segmented } from "@/components/ui/segmented";
-import { Slider } from "@/components/ui/slider";
-import { EmptyState } from "@/components/ui/empty-state";
+import { Input } from "@/components/ui/field";
 import { StatusBadge } from "@/components/status-badge";
 import { PresetCard } from "@/components/preset-card";
 import { StyleCard } from "@/components/create-image/style-card";
@@ -16,30 +14,19 @@ import {
   isTerminalStatus,
   type CharacterRecord,
   type JobRecord,
+  type RoutingDecision,
   type SoulStyle,
 } from "@/lib/higgsfield/types";
 import { cn, formatCredits, shortId } from "@/lib/utils";
 
-/** The 13 Soul resolutions, grouped by shape so the list reads as a menu of framings. */
-const SIZES: Array<{ value: string; label: string }> = [
-  { value: "2048x1152", label: "2048 × 1152 · wide 16:9" },
-  { value: "1696x960", label: "1696 × 960 · wide 16:9" },
-  { value: "2048x1536", label: "2048 × 1536 · landscape 4:3" },
-  { value: "1536x1152", label: "1536 × 1152 · landscape 4:3" },
-  { value: "2016x1344", label: "2016 × 1344 · landscape 3:2" },
-  { value: "1632x1088", label: "1632 × 1088 · landscape 3:2" },
-  { value: "1536x1536", label: "1536 × 1536 · square 1:1" },
-  { value: "1536x2048", label: "1536 × 2048 · portrait 3:4" },
-  { value: "1152x1536", label: "1152 × 1536 · portrait 3:4" },
-  { value: "1344x2016", label: "1344 × 2016 · portrait 2:3" },
-  { value: "1088x1632", label: "1088 × 1632 · portrait 2:3" },
-  { value: "1152x2048", label: "1152 × 2048 · tall 9:16" },
-  { value: "960x1696", label: "960 × 1696 · tall 9:16" },
-];
+type ProviderChoice = "auto" | "higgsfield" | "comfyui" | "huggingface" | "local_motion";
 
-const BATCHES: Array<{ value: 1 | 4; label: string }> = [
-  { value: 1, label: "1" },
-  { value: 4, label: "4" },
+const SIZES: Array<{ value: string; label: string }> = [
+  { value: "1536x2048", label: "3:4 Portrait" },
+  { value: "1152x2048", label: "9:16 Vertical" },
+  { value: "1536x1536", label: "1:1 Square" },
+  { value: "2048x1152", label: "16:9 Cinema" },
+  { value: "2048x1536", label: "4:3 Editorial" },
 ];
 
 function isVideoUrl(url: string): boolean {
@@ -47,61 +34,50 @@ function isVideoUrl(url: string): boolean {
   return path.endsWith(".mp4") || path.endsWith(".webm") || path.endsWith(".mov");
 }
 
-function activeCopy(status: string): string {
-  if (status === "waiting") return "Waiting for a free slot on your plan.";
-  if (status === "queued") return "Queued on Higgsfield.";
-  return "Rendering now. This usually takes under a minute.";
-}
-
 export function CreateImage() {
-  // Prompt bar state
   const [prompt, setPrompt] = useState("");
   const [size, setSize] = useState("1536x2048");
-  const [quality, setQuality] = useState<"720p" | "1080p">("1080p");
   const [batch, setBatch] = useState<1 | 4>(1);
-  const [seed, setSeed] = useState("");
+  const [provider, setProvider] = useState<ProviderChoice>("auto");
 
-  // Style gallery state
   const [styles, setStyles] = useState<SoulStyle[] | null>(null);
-  const [stylesError, setStylesError] = useState<string | null>(null);
-  const [stylesMissingKeys, setStylesMissingKeys] = useState(false);
+  const [catalogSource, setCatalogSource] = useState<"higgsfield_live" | "local_preview" | null>(
+    null
+  );
   const [search, setSearch] = useState("");
   const [styleId, setStyleId] = useState<string | null>(null);
-  const [styleStrength, setStyleStrength] = useState(1);
 
-  // Character state
   const [characters, setCharacters] = useState<CharacterRecord[]>([]);
   const [characterId, setCharacterId] = useState("");
-  const [characterStrength, setCharacterStrength] = useState(1);
 
-  // Submission and job state
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitMissingKeys, setSubmitMissingKeys] = useState(false);
+  const [decision, setDecision] = useState<RoutingDecision | null>(null);
+  const [queuedMsg, setQueuedMsg] = useState<string | null>(null);
   const [job, setJob] = useJobPoll(null);
   const [elapsed, setElapsed] = useState(0);
 
   const loadStyles = useCallback(async () => {
-    setStyles(null);
-    setStylesError(null);
-    setStylesMissingKeys(false);
     try {
-      const data = await getJSON<{ styles: SoulStyle[] }>("/api/catalog/soul-styles");
+      const data = await getJSON<{
+        styles: SoulStyle[];
+        source?: "higgsfield_live" | "local_preview";
+      }>("/api/catalog/soul-styles");
       setStyles(data.styles);
-    } catch (err) {
-      if (err instanceof ApiError && err.code === "missing_keys") {
-        setStylesMissingKeys(true);
-      } else {
-        setStylesError(err instanceof Error ? err.message : "The style catalog did not load.");
+      setCatalogSource(data.source ?? "higgsfield_live");
+      if (data.styles.length > 0 && !styleId) {
+        setStyleId(data.styles[0].id);
       }
+    } catch {
+      setStyles([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    loadStyles();
+    void loadStyles();
   }, [loadStyles]);
 
-  // Ready characters, with ?character=<id> preselected when present.
   useEffect(() => {
     const wanted = new URLSearchParams(window.location.search).get("character");
     getJSON<{ characters: CharacterRecord[] }>("/api/characters")
@@ -110,12 +86,9 @@ export function CreateImage() {
         setCharacters(ready);
         if (wanted && ready.some((c) => c.id === wanted)) setCharacterId(wanted);
       })
-      .catch(() => {
-        // No characters section without data; the page works fine without it.
-      });
+      .catch(() => {});
   }, []);
 
-  // Honest elapsed clock: ticks while the job runs, freezes at the real duration.
   useEffect(() => {
     if (!job) return;
     if (isTerminalStatus(job.status)) {
@@ -133,9 +106,7 @@ export function CreateImage() {
     const q = search.trim().toLowerCase();
     if (!q) return styles;
     return styles.filter(
-      (s) =>
-        s.name.toLowerCase().includes(q) ||
-        (s.description ?? "").toLowerCase().includes(q)
+      (s) => s.name.toLowerCase().includes(q) || (s.description ?? "").toLowerCase().includes(q)
     );
   }, [styles, search]);
 
@@ -144,364 +115,183 @@ export function CreateImage() {
     [styles, styleId]
   );
 
-  const submit = useCallback(async () => {
+  async function submit() {
     const trimmed = prompt.trim();
     if (!trimmed || submitting) return;
     setSubmitError(null);
-    setSubmitMissingKeys(false);
-
-    const body: Record<string, unknown> = {
-      prompt: trimmed,
-      width_and_height: size,
-      quality,
-      batch_size: batch,
-    };
-    if (styleId) {
-      body.style_id = styleId;
-      body.style_strength = styleStrength;
-    }
-    if (characterId) {
-      body.custom_reference_id = characterId;
-      body.custom_reference_strength = characterStrength;
-    }
-    const seedTrimmed = seed.trim();
-    if (seedTrimmed !== "") {
-      const n = Number(seedTrimmed);
-      if (!Number.isInteger(n) || n < 1 || n > 1_000_000) {
-        setSubmitError("Seed must be a whole number between 1 and 1000000, or empty for random.");
-        return;
-      }
-      body.seed = n;
-    }
-
+    setQueuedMsg(null);
     setSubmitting(true);
+
     try {
-      const { job: created } = await postJSON<{ job: JobRecord }>("/api/generate/soul", body);
-      setJob(created);
-    } catch (err) {
-      if (err instanceof ApiError && err.code === "missing_keys") {
-        setSubmitMissingKeys(true);
-      } else {
-        setSubmitError(err instanceof Error ? err.message : "The request failed.");
+      const stylePrompt =
+        selectedStyle && catalogSource === "local_preview"
+          ? `${trimmed}. Aesthetic: ${selectedStyle.name} — ${selectedStyle.description ?? ""}`
+          : trimmed;
+
+      const body: Record<string, unknown> = {
+        prompt: stylePrompt,
+        width_and_height: size,
+        quality: "1080p",
+        batch_size: batch,
+        provider,
+      };
+      if (styleId && catalogSource === "higgsfield_live") {
+        body.style_id = styleId;
+        body.style_strength = 1;
       }
+      if (characterId) {
+        body.custom_reference_id = characterId;
+        body.custom_reference_strength = 1;
+      }
+      const res = await postJSON<{ job: JobRecord; routingDecision?: RoutingDecision }>(
+        "/api/generate/soul",
+        body
+      );
+      setJob(res.job);
+      setDecision(res.routingDecision ?? res.job.routingDecision ?? null);
+    } catch (err) {
+      setSubmitError(
+        err instanceof ApiError ? err.message : err instanceof Error ? err.message : "Failed."
+      );
     } finally {
       setSubmitting(false);
     }
-  }, [prompt, submitting, size, quality, batch, styleId, styleStrength, characterId, characterStrength, seed, setJob]);
+  }
 
-  const jobActive = !!job && !isTerminalStatus(job.status);
-  const jobPrompt = typeof job?.params.prompt === "string" ? job.params.prompt : "Generated image";
-  const jobBatch = job?.params.batch_size === 4 ? 4 : 1;
-  const jobSize = typeof job?.params.width_and_height === "string" ? job.params.width_and_height : size;
-  const [jobW, jobH] = jobSize.split("x").map(Number);
-  const stylesLoading = styles === null && !stylesError && !stylesMissingKeys;
+  async function queueToPostiz(assetPath: string) {
+    try {
+      await postJSON("/api/publish", {
+        jobId: job?.id ?? null,
+        platform: "instagram",
+        caption: prompt.trim() || "New Soul still rendered in Vyolab Studio.",
+        hashtags: ["vyolab", "editorial", "aicreative"],
+        mediaPaths: [assetPath],
+      });
+      setQueuedMsg("Queued for Postiz human approval.");
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Could not queue draft.");
+    }
+  }
 
   return (
     <div className="animate-rise">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Create image</h1>
-        <p className="mt-1 text-sm text-ink-300">
-          Soul renders images from a prompt, with optional styles and characters.
-        </p>
-      </header>
-
-      {/* Prompt bar */}
-      <section className="animate-rise rise-1 mt-6 rounded-xl border border-ink-700 bg-ink-900 p-4 sm:p-5">
-        <label htmlFor="soul-prompt" className="sr-only">
-          Prompt
-        </label>
-        <Textarea
-          id="soul-prompt"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe the image. Subject, light, lens, mood."
-          className="min-h-28 bg-ink-950 text-[15px]"
-        />
-
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:items-end">
-          <Field label="Size" htmlFor="soul-size" className="col-span-2 sm:col-span-1">
-            <Select id="soul-size" value={size} onChange={(e) => setSize(e.target.value)}>
-              {SIZES.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Quality" htmlFor="soul-quality">
-            <Select
-              id="soul-quality"
-              value={quality}
-              onChange={(e) => setQuality(e.target.value as "720p" | "1080p")}
-            >
-              <option value="720p">720p</option>
-              <option value="1080p">1080p</option>
-            </Select>
-          </Field>
-          <Field label="Batch">
-            <Segmented options={BATCHES} value={batch} onChange={setBatch} label="Batch size" />
-          </Field>
-          <Field label="Seed" htmlFor="soul-seed">
-            <Input
-              id="soul-seed"
-              inputMode="numeric"
-              placeholder="random"
-              value={seed}
-              onChange={(e) => setSeed(e.target.value)}
-              className="font-mono"
-            />
-          </Field>
+      {/* Top Header Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="text-xl font-semibold tracking-tight text-ink-50 sm:text-2xl">
+            Soul Image Studio
+          </h1>
+          <span className="rounded-full border border-ink-800 bg-ink-900 px-2.5 py-0.5 font-mono text-[11px] text-ink-300">
+            {catalogSource === "higgsfield_live"
+              ? `${styles?.length ?? 0} live Soul styles`
+              : "Editorial aesthetics · routed via Higgsfield / ComfyUI FLUX / HF"}
+          </span>
         </div>
 
-        {characters.length > 0 && (
-          <div className="mt-3 grid gap-3 sm:grid-cols-2 sm:items-end">
-            <Field
-              label="Character"
-              htmlFor="soul-character"
-              help="Trained faces keep their identity in the render."
-            >
-              <Select
-                id="soul-character"
-                value={characterId}
-                onChange={(e) => setCharacterId(e.target.value)}
-              >
-                <option value="">None</option>
-                {characters.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-            {characterId && (
-              <div className="pb-1 sm:pb-8">
-                <Slider
-                  label="Character strength"
-                  value={characterStrength}
-                  onChange={setCharacterStrength}
-                />
-              </div>
+        <div className="relative w-56">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-ink-400"
+            aria-hidden
+          />
+          <Input
+            type="search"
+            placeholder="Search aesthetics..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-9 rounded-full pl-8 text-xs"
+          />
+        </div>
+      </div>
+
+      {/* Rendered Result Stage */}
+      {job && (
+        <section className="mt-5 rounded-2xl border border-ink-700 bg-ink-900/90 p-4 sm:p-5">
+          <div className="flex flex-wrap items-center gap-3">
+            <StatusBadge status={job.status} />
+            <span className="font-mono text-xs text-ink-400">{shortId(job.id)}</span>
+            {job.provider && (
+              <span className="rounded-full border border-lime-400/30 bg-lime-400/10 px-2.5 py-0.5 font-mono text-[11px] text-lime-400">
+                {job.provider}
+              </span>
             )}
+            <span className="ml-auto flex items-center gap-3 font-mono text-xs text-ink-300">
+              <span>{elapsed}s</span>
+              {job.estimatedCostUsd != null && <span>est. ${job.estimatedCostUsd.toFixed(2)}</span>}
+              {job.cost != null && <span>{formatCredits(job.cost)} cr</span>}
+            </span>
           </div>
-        )}
-
-        {selectedStyle && (
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-5">
-            <p className="text-[13px] text-ink-300">
-              Style: <span className="font-medium text-ink-50">{selectedStyle.name}</span>
-            </p>
-            <Slider
-              label="Strength"
-              value={styleStrength}
-              onChange={setStyleStrength}
-              className="w-full sm:max-w-sm sm:flex-1"
-            />
-          </div>
-        )}
-
-        {!characterId && (styleId || seed.trim() !== "") && (
-          <p className="mt-3 text-[13px] leading-relaxed text-amber">
-            Heads up: without a character, the API&apos;s standard Soul route uses prompt, size and
-            batch only. Style, seed and quality take effect once a character is selected.
-          </p>
-        )}
-
-        <div className="mt-4 flex justify-end">
-          <Button
-            size="lg"
-            onClick={submit}
-            disabled={!prompt.trim()}
-            loading={submitting}
-            className="w-full sm:w-auto"
-          >
-            Generate image
-          </Button>
-        </div>
-        {submitMissingKeys && (
-          <p className="mt-2.5 text-sm text-amber">
-            Add your Higgsfield API key first. Instructions are in the banner above.
-          </p>
-        )}
-        {submitError && <p className="mt-2.5 text-sm text-danger">{submitError}</p>}
-      </section>
-
-      {/* Result */}
-      <section className="animate-rise rise-2 mt-6" aria-label="Result">
-        {job ? (
-          <>
-            <div className="rounded-xl border border-ink-700 bg-ink-900 px-4 py-3.5 sm:px-5">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                <h2 className="text-base font-semibold">Result</h2>
-                <StatusBadge status={job.status} />
-                <span className="font-mono text-xs text-ink-300">{elapsed}s</span>
-                {job.cost != null && (
-                  <span className="font-mono text-xs text-ink-300">{formatCredits(job.cost)} cr</span>
-                )}
-                <span className="ml-auto font-mono text-[11px] text-ink-400">{shortId(job.id)}</span>
-              </div>
-
-              {jobActive && <p className="mt-2.5 text-sm text-ink-300">{activeCopy(job.status)}</p>}
-
-              {(job.status === "failed" || job.status === "nsfw") && (
-                <>
-                  <p className="mt-2.5 text-sm text-danger">
-                    {job.error ?? "The job failed without an error message."}
-                  </p>
-                  <div className="mt-3">
-                    <Button variant="secondary" onClick={submit} loading={submitting}>
-                      Try again
-                    </Button>
-                  </div>
-                </>
+          {decision && (
+            <p className="mt-2 font-mono text-[11px] text-ink-400">{decision.reason}</p>
+          )}
+          {job.status === "completed" && job.assets.length > 0 && (
+            <div
+              className={cn(
+                "mt-4 grid gap-4",
+                job.assets.length > 1 ? "grid-cols-2 lg:grid-cols-4" : "max-w-lg grid-cols-1"
               )}
-
-              {job.status === "canceled" && (
-                <>
-                  <p className="mt-2.5 text-sm text-ink-300">This job was canceled before it finished.</p>
-                  <div className="mt-3">
-                    <Button variant="secondary" onClick={submit} loading={submitting}>
-                      Try again
-                    </Button>
-                  </div>
-                </>
-              )}
-
-              {job.status === "completed" && job.assets.length === 0 && (
-                <p className="mt-2.5 text-sm text-ink-300">
-                  The job finished but returned no files. Rerun it from the jobs page.
-                </p>
-              )}
-            </div>
-
-            {jobActive && (
-              <div
-                className={cn(
-                  "mt-3 grid gap-3",
-                  jobBatch > 1 ? "grid-cols-2" : "max-w-xl grid-cols-1"
-                )}
-              >
-                {Array.from({ length: jobBatch }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="animate-pulse rounded-xl bg-ink-850"
-                    style={{ aspectRatio: `${jobW || 3} / ${jobH || 4}` }}
+            >
+              {job.assets.map((asset) => (
+                <figure
+                  key={asset.path}
+                  className="group relative overflow-hidden rounded-xl border border-ink-700 bg-ink-950"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`/api/assets/${asset.path}`}
+                    alt="Generated still"
+                    className="w-full object-cover"
                   />
-                ))}
-              </div>
-            )}
-
-            {job.status === "completed" && job.assets.length > 0 && (
-              <div
-                className={cn(
-                  "mt-3 grid gap-3",
-                  job.assets.length > 1 ? "grid-cols-2" : "max-w-xl grid-cols-1"
-                )}
-              >
-                {job.assets.map((asset, i) => (
-                  <figure
-                    key={asset.path}
-                    className="group relative overflow-hidden rounded-xl border border-ink-700 bg-ink-850"
-                  >
-                    {asset.type === "video" ? (
-                      <video
-                        src={`/api/assets/${asset.path}`}
-                        controls
-                        loop
-                        playsInline
-                        className="w-full rounded-lg"
-                      />
-                    ) : (
-                      <img
-                        src={`/api/assets/${asset.path}`}
-                        alt={`Render ${i + 1}: ${jobPrompt}`}
-                        className="w-full"
-                      />
-                    )}
+                  <div className="flex flex-wrap items-center gap-2 border-t border-ink-800 bg-ink-900/95 p-2.5">
+                    <Link
+                      href={`/create/video?image=${encodeURIComponent(`/api/assets/${asset.path}`)}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-lime-400 px-2.5 py-1.5 text-xs font-semibold text-ink-950 hover:bg-lime-300"
+                    >
+                      <Clapperboard className="size-3.5" aria-hidden />
+                      Animate (I2V)
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => void queueToPostiz(asset.path)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-ink-700 bg-ink-850 px-2.5 py-1.5 text-xs text-ink-200 hover:border-ink-600"
+                    >
+                      <Send className="size-3" aria-hidden />
+                      Publish
+                    </button>
                     <a
                       href={`/api/assets/${asset.path}`}
                       download
-                      className="absolute bottom-2 right-2 inline-flex items-center gap-1.5 rounded-md border border-ink-700 bg-ink-950/85 px-2.5 py-1.5 text-xs font-medium text-ink-50 transition-opacity hover:border-ink-600 sm:opacity-0 sm:focus-visible:opacity-100 sm:group-hover:opacity-100"
+                      className="ml-auto text-ink-300 hover:text-ink-50"
+                      aria-label="Download image"
                     >
-                      <Download className="size-3.5" aria-hidden />
-                      Download
+                      <Download className="size-4" />
                     </a>
-                  </figure>
-                ))}
-              </div>
-            )}
-          </>
-        ) : (
-          <EmptyState
-            icon={<ImageIcon />}
-            title="No renders yet"
-            body="Write a prompt, pick an aesthetic, render up to four at once."
-          />
-        )}
-      </section>
-
-      {/* Style gallery */}
-      <section className="animate-rise rise-3 mt-10" aria-label="Styles">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="text-lg font-semibold tracking-tight">Style</h2>
-            <p className="mt-0.5 text-sm text-ink-300">
-              One style per render. Click the selected tile to go back to no style.
+                  </div>
+                </figure>
+              ))}
+            </div>
+          )}
+          {queuedMsg && (
+            <p className="mt-3 font-mono text-xs text-lime-400">
+              {queuedMsg}{" "}
+              <Link href="/publish" className="underline">
+                Open Publish →
+              </Link>
             </p>
-          </div>
-          <div className="relative w-full sm:w-64">
-            <Search
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-400"
-              aria-hidden
-            />
-            <Input
-              aria-label="Search styles"
-              placeholder="Search styles"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-        </div>
+          )}
+          {job.error && <p className="mt-3 text-sm text-danger">{job.error}</p>}
+        </section>
+      )}
 
-        {stylesMissingKeys ? (
-          <EmptyState
-            className="mt-4"
-            icon={<KeyRound />}
-            title="Add your API key to browse styles"
-            body="The style catalog comes from the Higgsfield API. Follow the steps in the banner above, then retry."
-            action={
-              <Button variant="secondary" onClick={loadStyles}>
-                Retry
-              </Button>
-            }
-          />
-        ) : stylesError ? (
-          <EmptyState
-            className="mt-4"
-            icon={<ImageIcon />}
-            title="Styles did not load"
-            body={stylesError}
-            action={
-              <Button variant="secondary" onClick={loadStyles}>
-                Retry
-              </Button>
-            }
-          />
-        ) : stylesLoading ? (
-          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
+      {/* Full-Bleed Soul Aesthetic Grid */}
+      <section aria-label="Aesthetics" className="mt-5">
+        {styles === null ? (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-ink-850" />
+              <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-ink-900" />
             ))}
           </div>
-        ) : filteredStyles.length === 0 ? (
-          <div className="mt-4 rounded-xl border border-ink-700 bg-ink-900 px-5 py-8 text-center">
-            <p className="text-sm text-ink-300">No styles match &quot;{search.trim()}&quot;.</p>
-            <Button variant="ghost" size="sm" className="mt-2" onClick={() => setSearch("")}>
-              Clear search
-            </Button>
-          </div>
         ) : (
-          <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {filteredStyles.map((s) => {
               const selected = s.id === styleId;
               const toggle = () => setStyleId((cur) => (cur === s.id ? null : s.id));
@@ -511,6 +301,7 @@ export function CreateImage() {
                   name={s.name}
                   description={s.description}
                   previewUrl={s.preview_url}
+                  category={s.category}
                   selected={selected}
                   onSelect={toggle}
                   aspect="aspect-[3/4]"
@@ -529,6 +320,122 @@ export function CreateImage() {
           </div>
         )}
       </section>
+
+      {/* Floating Dark-Glass Bottom Image Prompt Dock */}
+      <div className="fixed inset-x-3 bottom-16 z-30 mx-auto max-w-4xl lg:bottom-5">
+        <div className="rounded-2xl border border-ink-700/90 bg-ink-900/92 p-3 shadow-[0_24px_64px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            {selectedStyle?.preview_url && (
+              <div className="relative hidden h-14 w-12 shrink-0 overflow-hidden rounded-xl border border-lime-400/60 sm:block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={selectedStyle.preview_url}
+                  alt={selectedStyle.name}
+                  className="size-full object-cover"
+                />
+                <span className="absolute inset-x-0 bottom-0 bg-ink-950/80 py-0.5 text-center font-mono text-[8px] text-lime-400">
+                  STYLE
+                </span>
+              </div>
+            )}
+
+            <div className="min-w-0 flex-1">
+              <textarea
+                rows={2}
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder={
+                  selectedStyle
+                    ? `Describe the shot in ${selectedStyle.name} style — subject, light, lens, mood...`
+                    : "Describe the image — subject, light, lens, mood..."
+                }
+                className="w-full resize-none bg-transparent text-sm leading-snug text-ink-50 placeholder:text-ink-400 focus:outline-none"
+              />
+            </div>
+
+            <Button
+              size="lg"
+              onClick={() => void submit()}
+              disabled={!prompt.trim()}
+              loading={submitting}
+              className="shrink-0 rounded-xl px-6"
+            >
+              <ImageIcon className="size-4" aria-hidden />
+              Generate
+            </Button>
+          </div>
+
+          <div className="mt-2.5 flex flex-wrap items-center gap-2 border-t border-ink-800/80 pt-2.5 font-mono text-[11px]">
+            <select
+              aria-label="Provider route"
+              value={provider}
+              onChange={(e) => setProvider(e.target.value as ProviderChoice)}
+              className="rounded-lg border border-ink-700 bg-ink-950 px-2.5 py-1 text-ink-200 focus:border-lime-400 focus:outline-none"
+            >
+              <option value="auto">Auto · Model Router</option>
+              <option value="higgsfield">Higgsfield Soul 2</option>
+              <option value="comfyui">ComfyUI · FLUX ($0 GPU)</option>
+              <option value="huggingface">HF Router · FLUX</option>
+              <option value="local_motion">Local Cinema Plate ($0)</option>
+            </select>
+
+            <select
+              aria-label="Aspect ratio"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              className="rounded-lg border border-ink-700 bg-ink-950 px-2.5 py-1 text-ink-200 focus:border-lime-400 focus:outline-none"
+            >
+              {SIZES.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+
+            <button
+              type="button"
+              onClick={() => setBatch((b) => (b === 1 ? 4 : 1))}
+              className={cn(
+                "rounded-lg border px-2.5 py-1 transition-colors",
+                batch === 4
+                  ? "border-lime-400/40 bg-lime-400/10 text-lime-400"
+                  : "border-ink-700 bg-ink-950 text-ink-300"
+              )}
+            >
+              {batch}× batch
+            </button>
+
+            {characters.length > 0 && (
+              <select
+                aria-label="Soul Character"
+                value={characterId}
+                onChange={(e) => setCharacterId(e.target.value)}
+                className="rounded-lg border border-ink-700 bg-ink-950 px-2.5 py-1 text-ink-200 focus:border-lime-400 focus:outline-none"
+              >
+                <option value="">No Character</option>
+                {characters.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    Soul ID: {c.name}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            {selectedStyle && (
+              <span className="inline-flex items-center gap-1 rounded-lg border border-ink-800 bg-ink-950 px-2.5 py-1 text-lime-400">
+                <Sparkles className="size-3" aria-hidden />
+                {selectedStyle.name}
+              </span>
+            )}
+
+            {submitError && (
+              <span className="ml-auto text-danger" role="alert">
+                {submitError}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

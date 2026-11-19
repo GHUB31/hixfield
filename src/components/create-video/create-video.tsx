@@ -1,7 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useId, useState } from "react";
-import { Clapperboard, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  Clapperboard,
+  Download,
+  ImagePlus,
+  Search,
+  Send,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { ApiError, getJSON, postJSON } from "@/lib/fetcher";
 import { useJobPoll } from "@/lib/use-poll";
 import {
@@ -10,32 +19,21 @@ import {
   type Motion,
   type RoutingDecision,
 } from "@/lib/higgsfield/types";
-import { formatCredits, shortId } from "@/lib/utils";
+import { cn, formatCredits, shortId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/ui/empty-state";
-import { Field, Input, Select, Textarea } from "@/components/ui/field";
-import { Segmented } from "@/components/ui/segmented";
+import { Input } from "@/components/ui/field";
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { MediaUpload } from "@/components/media-upload";
+import { PresetCard } from "@/components/preset-card";
 import { StatusBadge } from "@/components/status-badge";
-import { MotionGallery } from "@/components/create-video/motion-gallery";
 
 type Tier = "lite" | "standard" | "turbo";
 type ProviderChoice = "auto" | "higgsfield" | "comfyui" | "huggingface" | "local_motion";
-
-const TIERS: Array<{ value: Tier; label: string; hint: string }> = [
-  { value: "lite", label: "Lite", hint: "Cheapest Higgsfield tier (~$0.14)" },
-  { value: "standard", label: "Standard", hint: "Best quality (~$0.45)" },
-  { value: "turbo", label: "Turbo", hint: "Fastest DoP (~$0.25)" },
-];
 
 interface SelectedMotion {
   motion: Motion;
   strength: number;
 }
 
-/** Seconds since the job was created, ticking while it is still running. */
 function useElapsed(job: JobRecord | null): number {
   const [now, setNow] = useState(() => Date.now());
   const active = job !== null && !isTerminalStatus(job.status);
@@ -54,34 +52,80 @@ function useElapsed(job: JobRecord | null): number {
 }
 
 export function CreateVideo() {
-  // Motion catalog
   const [motions, setMotions] = useState<Motion[] | null>(null);
-  const [catalogError, setCatalogError] = useState<{ message: string; code?: string } | null>(null);
+  const [catalogSource, setCatalogSource] = useState<"higgsfield_live" | "local_preview" | null>(
+    null
+  );
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<string>("All");
+  const [selected, setSelected] = useState<SelectedMotion[]>([]);
+  const [limitHint, setLimitHint] = useState(false);
+
+  // Floating dock composer state
+  const [imageUrl, setImageUrl] = useState<string | null>("/media/hero-soundstage.webp");
+  const [endImageUrl, setEndImageUrl] = useState<string | null>(null);
+  const [uploadingSlot, setUploadingSlot] = useState<"start" | "end" | null>(null);
+  const [prompt, setPrompt] = useState("");
+  const [tier, setTier] = useState<Tier>("standard");
+  const [duration, setDuration] = useState<number>(3);
+  const [provider, setProvider] = useState<ProviderChoice>("auto");
+  const [enhance, setEnhance] = useState(true);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [decision, setDecision] = useState<RoutingDecision | null>(null);
+  const [job, setJob] = useJobPoll(null);
+  const [queuedNotice, setQueuedNotice] = useState<string | null>(null);
+  const elapsed = useElapsed(job);
+
+  const startInputRef = useRef<HTMLInputElement>(null);
+  const endInputRef = useRef<HTMLInputElement>(null);
+
+  // Support deep-linking from Image or Library (?image=...)
+  useEffect(() => {
+    const imgParam = new URLSearchParams(window.location.search).get("image");
+    if (imgParam) setImageUrl(imgParam);
+  }, []);
 
   const loadMotions = useCallback(async () => {
-    setCatalogError(null);
-    setMotions(null);
     try {
-      const data = await getJSON<{ motions: Motion[] }>("/api/catalog/motions");
+      const data = await getJSON<{
+        motions: Motion[];
+        source?: "higgsfield_live" | "local_preview";
+      }>("/api/catalog/motions");
       setMotions(data.motions);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setCatalogError({ message: err.message, code: err.code });
-      } else {
-        setCatalogError({
-          message: err instanceof Error ? err.message : "The motion catalog failed to load.",
-        });
+      setCatalogSource(data.source ?? "higgsfield_live");
+      if (data.motions.length > 0 && selected.length === 0) {
+        setSelected([{ motion: data.motions[0], strength: 0.8 }]);
       }
+    } catch {
+      setMotions([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     void loadMotions();
   }, [loadMotions]);
 
-  // Selection (A then B, two at most)
-  const [selected, setSelected] = useState<SelectedMotion[]>([]);
-  const [limitHint, setLimitHint] = useState(false);
+  const categories = useMemo(() => {
+    const set = new Set<string>(["All"]);
+    for (const m of motions ?? []) {
+      if (m.category) set.add(m.category);
+    }
+    return Array.from(set);
+  }, [motions]);
+
+  const filteredMotions = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return (motions ?? []).filter((m) => {
+      if (category !== "All" && m.category !== category) return false;
+      if (!q) return true;
+      return (
+        m.name.toLowerCase().includes(q) || (m.description ?? "").toLowerCase().includes(q)
+      );
+    });
+  }, [motions, query, category]);
 
   function toggleMotion(motion: Motion) {
     const already = selected.some((s) => s.motion.id === motion.id);
@@ -100,45 +144,46 @@ export function CreateVideo() {
     setSelected((prev) => prev.map((s) => (s.motion.id === id ? { ...s, strength } : s)));
   }
 
-  // Form
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [endImageUrl, setEndImageUrl] = useState<string | null>(null);
-  const [prompt, setPrompt] = useState("");
-  const [tier, setTier] = useState<Tier>("standard");
-  const [provider, setProvider] = useState<ProviderChoice>("auto");
-  const [enhance, setEnhance] = useState(true);
-  const [seed, setSeed] = useState("");
-  const promptId = useId();
-  const seedId = useId();
-  const providerId = useId();
-
-  // Submission and the job it produces
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [missingKeys, setMissingKeys] = useState(false);
-  const [rerunning, setRerunning] = useState(false);
-  const [rerunError, setRerunError] = useState<string | null>(null);
-  const [decision, setDecision] = useState<RoutingDecision | null>(null);
-  const [job, setJob] = useJobPoll(null);
-  const elapsed = useElapsed(job);
+  async function uploadFrame(file: File, slot: "start" | "end") {
+    setUploadingSlot(slot);
+    setSubmitError(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("kind", "image");
+      const res = await fetch("/api/uploads", { method: "POST", body: form });
+      const data = (await res.json()) as { url?: string; message?: string };
+      if (!res.ok || !data.url) throw new Error(data.message ?? "Upload failed");
+      if (slot === "start") setImageUrl(data.url);
+      else setEndImageUrl(data.url);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      setUploadingSlot(null);
+    }
+  }
 
   async function handleSubmit() {
     if (!imageUrl || submitting) return;
     setSubmitting(true);
     setSubmitError(null);
-    setRerunError(null);
-    setMissingKeys(false);
+    setQueuedNotice(null);
     try {
+      const motionHint = selected.map((s) => s.motion.name).join(", ");
+      const fullPrompt = prompt.trim() || (motionHint ? `${motionHint} camera motion` : "Slow cinematic push in");
       const body: Record<string, unknown> = {
         tier,
         provider,
+        duration,
         image_url: imageUrl,
-        motions: selected.map((s) => ({ id: s.motion.id, strength: s.strength })),
+        prompt: fullPrompt,
+        motions:
+          catalogSource === "higgsfield_live"
+            ? selected.map((s) => ({ id: s.motion.id, strength: s.strength }))
+            : [],
         enhance_prompt: enhance,
       };
-      if (prompt.trim()) body.prompt = prompt.trim();
       if (endImageUrl) body.end_image_url = endImageUrl;
-      if (seed.trim() !== "") body.seed = Number(seed);
       const res = await postJSON<{ job: JobRecord; routingDecision?: RoutingDecision }>(
         "/api/generate/dop",
         body
@@ -146,333 +191,359 @@ export function CreateVideo() {
       setJob(res.job);
       setDecision(res.routingDecision ?? res.job.routingDecision ?? null);
     } catch (err) {
-      if (err instanceof ApiError && err.code === "missing_keys") {
-        setMissingKeys(true);
-      } else {
-        setSubmitError(err instanceof Error ? err.message : "The request failed.");
-      }
+      setSubmitError(
+        err instanceof ApiError ? err.message : err instanceof Error ? err.message : "Failed."
+      );
     } finally {
       setSubmitting(false);
     }
   }
 
-  async function handleRerun() {
-    if (!job || rerunning) return;
-    setRerunning(true);
-    setRerunError(null);
+  async function queueToPostiz(assetPath: string) {
     try {
-      const { job: next } = await postJSON<{ job: JobRecord }>(`/api/jobs/${job.id}/rerun`, {});
-      setJob(next);
+      await postJSON("/api/publish", {
+        jobId: job?.id ?? null,
+        platform: "tiktok",
+        caption: prompt.trim() || "New cinema cut rendered in Vyolab Studio.",
+        hashtags: ["vyolab", "aivideo", "cinema"],
+        mediaPaths: [assetPath],
+      });
+      setQueuedNotice("Added to Publish approval queue (pending_approval).");
     } catch (err) {
-      setRerunError(err instanceof Error ? err.message : "The rerun failed.");
-    } finally {
-      setRerunning(false);
+      setSubmitError(err instanceof Error ? err.message : "Could not queue draft.");
     }
   }
 
   const active = job !== null && !isTerminalStatus(job.status);
-  const activeTier = TIERS.find((t) => t.value === tier);
 
   return (
     <div className="animate-rise">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Create video</h1>
-        <p className="mt-1.5 text-sm text-ink-300">
-          Pick up to two camera moves, set a first frame, and let the model router dispatch to
-          Higgsfield DoP, ComfyUI GPU, Hugging Face, or local FFmpeg motion.
-        </p>
-      </header>
+      {/* Top Cinema Control Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="text-xl font-semibold tracking-tight text-ink-50 sm:text-2xl">
+            Camera Motion Studio
+          </h1>
+          <span className="rounded-full border border-ink-800 bg-ink-900 px-2.5 py-0.5 font-mono text-[11px] text-ink-300">
+            {catalogSource === "higgsfield_live"
+              ? `${motions?.length ?? 0} live DoP motions`
+              : "Cinema preview rig · add HF keys for 50+ live motions"}
+          </span>
+        </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
-        {/* Gallery column: the visual lead. First on mobile, right on desktop. */}
-        <section
-          aria-label="Camera moves"
-          className="animate-rise rise-1 order-1 flex flex-col gap-3 lg:order-2 lg:col-span-7"
-        >
-          {selected.length === 0 ? (
-            <div className="rounded-xl border border-ink-700 bg-ink-900/60 p-3">
-              <div className="flex flex-col gap-3 opacity-60" aria-hidden>
-                {(["A", "B"] as const).map((slot) => (
-                  <div key={slot} className="flex items-start gap-3">
-                    <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-md border border-ink-700 bg-ink-850 font-mono text-xs text-ink-400">
-                      {slot}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <Slider
-                        value={0.8}
-                        onChange={() => {}}
-                        label="Strength"
-                        disabled
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-3 text-[13px] text-ink-400">Stack up to two camera moves</p>
-            </div>
-          ) : (
-            <div className="sticky top-3 z-10 rounded-xl border border-ink-700 bg-ink-900/95 p-3 backdrop-blur">
-              <div className="flex flex-col gap-3">
-                {selected.map((s, i) => (
-                  <div key={s.motion.id} className="flex items-start gap-3">
-                    <span
-                      className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-md bg-lime-400 font-mono text-xs font-bold text-ink-950"
-                      aria-hidden
-                    >
-                      {i === 0 ? "A" : "B"}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-baseline gap-2">
-                        <p className="truncate text-sm font-medium text-ink-50">{s.motion.name}</p>
-                        {s.motion.start_end_frame && (
-                          <span className="whitespace-nowrap text-[11px] text-ink-400">
-                            supports a last frame
-                          </span>
-                        )}
-                      </div>
-                      <Slider
-                        value={s.strength}
-                        onChange={(v) => setStrength(s.motion.id, v)}
-                        label="Strength"
-                        className="mt-1"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => toggleMotion(s.motion)}
-                      aria-label={`Remove ${s.motion.name}`}
-                      className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-md text-ink-400 transition-colors hover:bg-ink-800 hover:text-ink-50"
-                    >
-                      <X className="size-4" aria-hidden />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <MotionGallery
-            motions={motions}
-            loading={motions === null && catalogError === null}
-            error={catalogError}
-            onRetry={() => void loadMotions()}
-            selection={selected.map((s) => s.motion)}
-            onToggle={toggleMotion}
-            limitHint={limitHint}
-          />
-        </section>
-
-        {/* Form and result column */}
-        <div className="animate-rise rise-2 order-2 flex flex-col gap-6 lg:order-1 lg:col-span-5">
-          <section
-            aria-label="Shot setup"
-            className="flex flex-col gap-5 rounded-xl border border-ink-700 bg-ink-900 p-4 sm:p-5"
-          >
-            <MediaUpload label="First frame" kind="image" value={imageUrl} onChange={setImageUrl} />
-            <MediaUpload
-              label="Last frame (optional)"
-              kind="image"
-              value={endImageUrl}
-              onChange={setEndImageUrl}
-              help="Motions marked in the panel can end on this frame."
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1 rounded-full border border-ink-800 bg-ink-900 p-1">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setCategory(cat)}
+                className={cn(
+                  "rounded-full px-3 py-1 text-xs transition-colors",
+                  category === cat
+                    ? "bg-ink-800 font-medium text-lime-400"
+                    : "text-ink-400 hover:text-ink-100"
+                )}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+          <div className="relative w-52">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-ink-400"
+              aria-hidden
             />
+            <Input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search motions..."
+              className="h-9 rounded-full pl-8 text-xs"
+            />
+          </div>
+        </div>
+      </div>
 
-            <Field label="Prompt (optional)" htmlFor={promptId}>
-              <Textarea
-                id={promptId}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Slow push in on the subject, shallow focus, warm practical light from the window"
-                maxLength={2000}
-              />
-            </Field>
-
-            <Field
-              label="Provider route"
-              htmlFor={providerId}
-              help="Auto scores quality, availability, and USD cost across configured adapters."
-            >
-              <Select
-                id={providerId}
-                value={provider}
-                onChange={(e) => setProvider(e.target.value as ProviderChoice)}
-              >
-                <option value="auto">Auto · Vyolab Model Router</option>
-                <option value="higgsfield">Higgsfield Official API (DoP)</option>
-                <option value="comfyui">ComfyUI · Wan 2.2 (Colab / Cloud GPU · $0)</option>
-                <option value="huggingface">Hugging Face Inference Router</option>
-                <option value="local_motion">Local FFmpeg 2D Motion ($0 fallback)</option>
-              </Select>
-            </Field>
-
-            <Field label="Higgsfield DoP tier">
-              <Segmented<Tier> options={TIERS} value={tier} onChange={setTier} label="Tier" />
-              {activeTier && <p className="mt-1.5 text-[13px] text-ink-400">{activeTier.hint}</p>}
-            </Field>
-
-            <Switch checked={enhance} onChange={setEnhance} label="Enhance prompt" />
-
-            <Field label="Seed (optional)" htmlFor={seedId} help="Same seed, same shot.">
-              <Input
-                id={seedId}
-                type="number"
-                inputMode="numeric"
-                min={1}
-                max={1000000}
-                className="font-mono"
-                placeholder="Random"
-                value={seed}
-                onChange={(e) => setSeed(e.target.value)}
-              />
-            </Field>
-
-            <div>
-              <Button
-                size="lg"
-                className="w-full"
-                onClick={() => void handleSubmit()}
-                disabled={!imageUrl}
-                loading={submitting}
-              >
-                Generate video
-              </Button>
-              {missingKeys && (
-                <p className="mt-3 text-sm text-amber" role="status">
-                  Add your Higgsfield API key first, or select Auto / ComfyUI / Local Motion.
-                </p>
-              )}
-              {submitError && (
-                <p className="mt-3 text-sm text-danger" role="alert">
-                  {submitError}
-                </p>
-              )}
-            </div>
-          </section>
-
-          <section aria-label="Result">
-            {!job ? (
-              <EmptyState
-                icon={<Clapperboard aria-hidden />}
-                title="No video yet"
-                body="Add an image, choose camera moves or a provider route, and generate your shot."
-              />
-            ) : (
-              <div className="rounded-xl border border-ink-700 bg-ink-900 p-4 sm:p-5">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                  <StatusBadge status={job.status} />
-                  <span className="font-mono text-xs text-ink-400">{shortId(job.id)}</span>
-                  {job.provider && (
-                    <span className="rounded-md border border-ink-700 bg-ink-850 px-2 py-0.5 font-mono text-[11px] text-ink-300">
-                      {job.provider}
-                    </span>
-                  )}
-                  <span className="ml-auto flex items-center gap-3">
-                    {active && <span className="font-mono text-xs text-ink-300">{elapsed}s</span>}
-                    {job.estimatedCostUsd != null && (
-                      <span className="font-mono text-xs text-ink-300">
-                        est. ${job.estimatedCostUsd.toFixed(2)}
-                      </span>
-                    )}
-                    {job.cost != null && (
-                      <span className="font-mono text-xs text-ink-300">
-                        {formatCredits(job.cost)} cr
-                      </span>
-                    )}
-                  </span>
-                </div>
-
-                {decision && (
-                  <p className="mt-2 font-mono text-[11px] text-ink-400">{decision.reason}</p>
-                )}
-
-                {job.status === "waiting" && (
-                  <p className="mt-3 text-sm text-ink-300">Waiting for a free concurrency slot.</p>
-                )}
-                {job.status === "queued" && (
-                  <p className="mt-3 text-sm text-ink-300">Queued on {job.provider ?? "upstream"}.</p>
-                )}
-                {job.status === "in_progress" && (
-                  <p className="mt-3 text-sm text-ink-300">Rendering your shot.</p>
-                )}
-
-                {job.status === "completed" && (
-                  <div className="mt-4 flex flex-col gap-4">
-                    {job.assets.map((asset) => (
-                      <div key={asset.path}>
-                        {asset.type === "video" ? (
-                          <video
-                            src={`/api/assets/${asset.path}`}
-                            controls
-                            loop
-                            playsInline
-                            className="w-full rounded-lg"
-                          />
-                        ) : asset.type === "image" ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={`/api/assets/${asset.path}`}
-                            alt="Generated frame"
-                            className="w-full rounded-lg"
-                          />
-                        ) : (
-                          <audio controls src={`/api/assets/${asset.path}`} className="w-full" />
-                        )}
-                        <a
-                          href={`/api/assets/${asset.path}`}
-                          download
-                          className="mt-2 inline-block text-sm text-lime-400 underline decoration-lime-400/40 underline-offset-2 transition-colors hover:decoration-lime-400"
-                        >
-                          Download
-                        </a>
-                      </div>
-                    ))}
-                    {job.assets.length === 0 && (
-                      <p className="text-sm text-ink-300">
-                        The job finished but returned no files. Try running it again.
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {(job.status === "failed" || job.status === "nsfw") && (
-                  <div className="mt-3">
-                    {job.error && <p className="text-sm text-danger">{job.error}</p>}
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="mt-3"
-                      onClick={() => void handleRerun()}
-                      loading={rerunning}
-                    >
-                      Try again
-                    </Button>
-                  </div>
-                )}
-
-                {job.status === "canceled" && (
-                  <div className="mt-3">
-                    <p className="text-sm text-ink-300">This job was canceled.</p>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="mt-3"
-                      onClick={() => void handleRerun()}
-                      loading={rerunning}
-                    >
-                      Run again
-                    </Button>
-                  </div>
-                )}
-
-                {rerunError && (
-                  <p className="mt-3 text-sm text-danger" role="alert">
-                    {rerunError}
+      {/* Live Cinema Monitor (appears seamlessly once a render is triggered) */}
+      {job && (
+        <section className="mt-5 overflow-hidden rounded-2xl border border-ink-700 bg-ink-900/90 p-4 sm:p-5">
+          <div className="flex flex-wrap items-center gap-3">
+            <StatusBadge status={job.status} />
+            <span className="font-mono text-xs text-ink-400">{shortId(job.id)}</span>
+            {job.provider && (
+              <span className="rounded-full border border-lime-400/30 bg-lime-400/10 px-2.5 py-0.5 font-mono text-[11px] text-lime-400">
+                {job.provider}
+              </span>
+            )}
+            <span className="ml-auto flex items-center gap-3 font-mono text-xs text-ink-300">
+              {active && <span>{elapsed}s</span>}
+              {job.estimatedCostUsd != null && <span>est. ${job.estimatedCostUsd.toFixed(2)}</span>}
+              {job.cost != null && <span>{formatCredits(job.cost)} cr</span>}
+            </span>
+          </div>
+          {decision && (
+            <p className="mt-2 font-mono text-[11px] text-ink-400">{decision.reason}</p>
+          )}
+          {job.status === "completed" && job.assets[0] && (
+            <div className="mt-4 grid grid-cols-1 items-end gap-4 lg:grid-cols-12">
+              <div className="lg:col-span-8">
+                <video
+                  src={`/api/assets/${job.assets[0].path}`}
+                  controls
+                  autoPlay
+                  loop
+                  playsInline
+                  className="max-h-[440px] w-full rounded-xl border border-ink-700 bg-ink-950 object-contain"
+                />
+              </div>
+              <div className="flex flex-col gap-2.5 lg:col-span-4">
+                <a
+                  href={`/api/assets/${job.assets[0].path}`}
+                  download
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-ink-700 bg-ink-800 px-4 text-sm font-medium text-ink-50 transition-colors hover:border-ink-600"
+                >
+                  <Download className="size-4" aria-hidden />
+                  Download MP4
+                </a>
+                <Button
+                  variant="secondary"
+                  onClick={() => void queueToPostiz(job.assets[0].path)}
+                >
+                  <Send className="size-4" aria-hidden />
+                  Queue for Postiz Approval
+                </Button>
+                {queuedNotice && (
+                  <p className="font-mono text-xs text-lime-400">
+                    {queuedNotice}{" "}
+                    <Link href="/publish" className="underline">
+                      Open Publish →
+                    </Link>
                   </p>
                 )}
               </div>
+            </div>
+          )}
+          {job.error && <p className="mt-3 text-sm text-danger">{job.error}</p>}
+        </section>
+      )}
+
+      {/* Selected Motion Stack Strip (compact cinema rig bar) */}
+      {selected.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-ink-800 bg-ink-900/70 px-3.5 py-2.5">
+          <span className="font-mono text-[11px] uppercase tracking-wider text-ink-400">
+            Active Rig
+          </span>
+          {selected.map((s, i) => (
+            <div
+              key={s.motion.id}
+              className="flex items-center gap-2.5 rounded-lg border border-ink-700 bg-ink-950/90 px-2.5 py-1.5"
+            >
+              <span className="grid size-5 place-items-center rounded bg-lime-400 font-mono text-[11px] font-bold text-ink-950">
+                {i === 0 ? "A" : "B"}
+              </span>
+              <span className="text-xs font-medium text-ink-100">{s.motion.name}</span>
+              <div className="w-24">
+                <Slider
+                  value={s.strength}
+                  onChange={(v) => setStrength(s.motion.id, v)}
+                  label="Strength"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => toggleMotion(s.motion)}
+                aria-label={`Remove ${s.motion.name}`}
+                className="text-ink-400 hover:text-ink-50"
+              >
+                <X className="size-3.5" />
+              </button>
+            </div>
+          ))}
+          {limitHint && (
+            <span className="font-mono text-[11px] text-amber">Max 2 camera moves stacked</span>
+          )}
+        </div>
+      )}
+
+      {/* Edge-to-Edge Full-Bleed Cinema Motion Gallery */}
+      <section aria-label="Camera motion presets" className="mt-5">
+        {motions === null ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="aspect-video animate-pulse rounded-xl bg-ink-900" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {filteredMotions.map((m) => {
+              const idx = selected.findIndex((s) => s.motion.id === m.id);
+              const tag = idx === 0 ? "A" : idx === 1 ? "B" : undefined;
+              return (
+                <PresetCard
+                  key={m.id}
+                  name={m.name}
+                  description={m.description}
+                  previewUrl={m.preview_url}
+                  posterUrl={m.poster_url}
+                  category={m.category}
+                  selected={tag !== undefined}
+                  selectionTag={tag}
+                  onSelect={() => toggleMotion(m)}
+                />
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      {/* Higgsfield-style Floating Bottom Dark-Glass Prompt & Camera Dock */}
+      <div className="fixed inset-x-3 bottom-16 z-30 mx-auto max-w-4xl lg:bottom-5">
+        <div className="rounded-2xl border border-ink-700/90 bg-ink-900/92 p-3 shadow-[0_24px_64px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
+          <input
+            ref={startInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void uploadFrame(f, "start");
+            }}
+          />
+          <input
+            ref={endInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void uploadFrame(f, "end");
+            }}
+          />
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* Start / End Frame visual chips */}
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => startInputRef.current?.click()}
+                title="Upload start frame"
+                className="group relative h-14 w-20 overflow-hidden rounded-xl border border-ink-700 bg-ink-950 transition-colors hover:border-lime-400"
+              >
+                {imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={imageUrl} alt="Start frame" className="size-full object-cover" />
+                ) : (
+                  <div className="grid size-full place-items-center text-ink-400">
+                    <ImagePlus className="size-4" />
+                  </div>
+                )}
+                <span className="absolute inset-x-0 bottom-0 bg-ink-950/80 py-0.5 text-center font-mono text-[9px] text-ink-200">
+                  {uploadingSlot === "start" ? "..." : "START"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => endInputRef.current?.click()}
+                title="Upload optional end frame"
+                className="group relative h-14 w-16 overflow-hidden rounded-xl border border-dashed border-ink-700 bg-ink-950/70 transition-colors hover:border-ink-500"
+              >
+                {endImageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={endImageUrl} alt="End frame" className="size-full object-cover" />
+                ) : (
+                  <div className="grid size-full place-items-center text-ink-400">
+                    <ImagePlus className="size-3.5" />
+                  </div>
+                )}
+                <span className="absolute inset-x-0 bottom-0 bg-ink-950/80 py-0.5 text-center font-mono text-[9px] text-ink-400">
+                  {uploadingSlot === "end" ? "..." : "END"}
+                </span>
+              </button>
+            </div>
+
+            {/* Prompt input */}
+            <div className="min-w-0 flex-1">
+              <textarea
+                rows={2}
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Direct the shot — camera move, lens, lighting, motion intensity..."
+                className="w-full resize-none bg-transparent text-sm leading-snug text-ink-50 placeholder:text-ink-400 focus:outline-none"
+              />
+            </div>
+
+            {/* Primary Signal Lime Generate CTA */}
+            <Button
+              size="lg"
+              onClick={() => void handleSubmit()}
+              disabled={!imageUrl}
+              loading={submitting}
+              className="shrink-0 rounded-xl px-6"
+            >
+              <Clapperboard className="size-4" aria-hidden />
+              Generate
+            </Button>
+          </div>
+
+          {/* Bottom compact pill controls */}
+          <div className="mt-2.5 flex flex-wrap items-center gap-2 border-t border-ink-800/80 pt-2.5 font-mono text-[11px]">
+            <select
+              aria-label="Provider route"
+              value={provider}
+              onChange={(e) => setProvider(e.target.value as ProviderChoice)}
+              className="rounded-lg border border-ink-700 bg-ink-950 px-2.5 py-1 text-ink-200 focus:border-lime-400 focus:outline-none"
+            >
+              <option value="auto">Auto · Model Router</option>
+              <option value="higgsfield">Higgsfield DoP</option>
+              <option value="comfyui">ComfyUI · Wan 2.2 ($0 GPU)</option>
+              <option value="huggingface">HF Router · Wan 2.2</option>
+              <option value="local_motion">Local FFmpeg 2D ($0)</option>
+            </select>
+
+            <select
+              aria-label="DoP tier"
+              value={tier}
+              onChange={(e) => setTier(e.target.value as Tier)}
+              className="rounded-lg border border-ink-700 bg-ink-950 px-2.5 py-1 text-ink-200 focus:border-lime-400 focus:outline-none"
+            >
+              <option value="lite">DoP Lite</option>
+              <option value="standard">DoP Standard</option>
+              <option value="turbo">DoP Turbo</option>
+            </select>
+
+            <select
+              aria-label="Duration"
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value))}
+              className="rounded-lg border border-ink-700 bg-ink-950 px-2.5 py-1 text-ink-200 focus:border-lime-400 focus:outline-none"
+            >
+              <option value={2}>2s</option>
+              <option value={3}>3s</option>
+              <option value={5}>5s</option>
+            </select>
+
+            <button
+              type="button"
+              onClick={() => setEnhance((v) => !v)}
+              className={cn(
+                "inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 transition-colors",
+                enhance
+                  ? "border-lime-400/40 bg-lime-400/10 text-lime-400"
+                  : "border-ink-700 bg-ink-950 text-ink-400"
+              )}
+            >
+              <Sparkles className="size-3" aria-hidden />
+              Enhance {enhance ? "ON" : "OFF"}
+            </button>
+
+            {submitError && (
+              <span className="ml-auto text-danger" role="alert">
+                {submitError}
+              </span>
             )}
-          </section>
+          </div>
         </div>
       </div>
     </div>
