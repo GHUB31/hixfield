@@ -217,7 +217,8 @@ export function CreateVideo() {
   const active = job !== null && !isTerminalStatus(job.status);
 
   return (
-    <div className="animate-rise">
+    <>
+    <div className="animate-rise pb-44">
       {/* Top Cinema Control Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -396,6 +397,7 @@ export function CreateVideo() {
           </div>
         )}
       </section>
+    </div>
 
       {/* Higgsfield-style Floating Bottom Dark-Glass Prompt & Camera Dock */}
       <div className="fixed inset-x-3 bottom-16 z-30 mx-auto max-w-4xl lg:bottom-5">
@@ -546,6 +548,6 @@ export function CreateVideo() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

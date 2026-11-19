@@ -174,7 +174,8 @@ export function CreateImage() {
   }
 
   return (
-    <div className="animate-rise">
+    <>
+    <div className="animate-rise pb-44">
       {/* Top Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -320,6 +321,7 @@ export function CreateImage() {
           </div>
         )}
       </section>
+    </div>
 
       {/* Floating Dark-Glass Bottom Image Prompt Dock */}
       <div className="fixed inset-x-3 bottom-16 z-30 mx-auto max-w-4xl lg:bottom-5">
@@ -436,6 +438,6 @@ export function CreateImage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

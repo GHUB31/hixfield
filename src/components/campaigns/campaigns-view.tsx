@@ -98,7 +98,8 @@ export function CampaignsView() {
   }
 
   return (
-    <div className="animate-rise">
+    <>
+    <div className="animate-rise pb-44">
       {/* Top Bar */}
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2.5">
@@ -328,6 +329,7 @@ export function CampaignsView() {
           </div>
         </div>
       )}
+    </div>
 
       {/* Floating Bottom Supercomputer Agent Brief Dock */}
       <form
@@ -429,6 +431,6 @@ export function CampaignsView() {
           </div>
         </div>
       </form>
-    </div>
+    </>
   );
 }
