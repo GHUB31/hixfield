@@ -17,16 +17,15 @@ const splineMono = Spline_Sans_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Hixfield, the open-source Higgsfield",
-    template: "%s · Hixfield",
+    default: "Vyolab Studio — Self-Hosted AI Creative Platform",
+    template: "%s · Vyolab Studio",
   },
   description:
-    "Cinematic camera-controlled AI video, Soul-style images, consistent characters, and talking avatars. Self-hosted on the official Higgsfield API with your own key. MIT licensed.",
-  metadataBase: new URL("https://hixfield.vercel.app"),
+    "Self-hosted AI creative platform for Vyolab (forked from Hixfield): Higgsfield official API & open-source skills, ComfyUI Colab/cloud GPU routing, Supercomputer campaign agent, spend guardrails, and Postiz approval publishing.",
   openGraph: {
-    title: "Hixfield, the open-source Higgsfield",
+    title: "Vyolab Studio — Self-Hosted AI Creative Platform",
     description:
-      "Someone just open-sourced the Higgsfield create experience. Bring your own API key, run one command.",
+      "Camera-controlled AI video, multi-provider GPU/API routing, Supercomputer campaign orchestration, and human-approved Postiz publishing.",
     images: ["/media/hero-soundstage.webp"],
   },
 };
@@ -35,22 +34,10 @@ export const viewport: Viewport = {
   themeColor: "#09090b",
 };
 
-const DIRECTION_CONTRACT = `
-THESIS: A night grading suite for AI cinematography — the preset gallery IS the interface. Refuses the SaaS-dashboard arrangement of stat cards and hero metrics.
-OWN-WORLD: Layered near-blacks (#09090b→#17171d) under hairline borders; one lime signal #ccff00 committed at page scale on Persuade surfaces; Archivo (width axis as the expressive range) with Spline Sans Mono strictly for data — timecodes, seeds, credits, job ids. Playhead sliders, recording-lamp status pulses.
-STORY: A developer pastes a key pair, watches 50+ camera presets load with live video thumbnails, stacks two motions, and gets a DoP shot — then stars the repo.
-FIRST VIEWPORT (landing): Full-bleed generated soundstage still under a wide-set HIXFIELD wordmark, one-line hook, two actions — Run it (copy command) and GitHub star count, live preset strip below the fold line.
-FORM: Grading-suite console; #1 of the derivation; brief-pinned (dark + lime + preset-video-cards), no seed roll owed.
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance.
-`;
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${archivo.variable} ${splineMono.variable}`}>
-      <body>
-        <script type="text/x-direction-contract" dangerouslySetInnerHTML={{ __html: DIRECTION_CONTRACT }} />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

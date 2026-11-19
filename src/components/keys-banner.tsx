@@ -1,29 +1,45 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { KeyRound } from "lucide-react";
 import { getJSON } from "@/lib/fetcher";
 
-/** Shown across the studio until a key pair is configured. Teaches the fix, then disappears. */
+interface StatusRes {
+  hasKeys: boolean;
+  secrets?: { higgsfield: boolean; comfyui: boolean; huggingface: boolean };
+}
+
+/**
+ * Shown across the studio when neither Higgsfield API nor ComfyUI GPU is configured.
+ * Teaches server-side setup without exposing keys to the browser.
+ */
 export function KeysBanner() {
-  const [hasKeys, setHasKeys] = useState<boolean | null>(null);
+  const [status, setStatus] = useState<StatusRes | null>(null);
 
   useEffect(() => {
-    getJSON<{ hasKeys: boolean }>("/api/status")
-      .then((s) => setHasKeys(s.hasKeys))
-      .catch(() => setHasKeys(null));
+    getJSON<StatusRes>("/api/status")
+      .then((s) => setStatus(s))
+      .catch(() => setStatus(null));
   }, []);
 
-  if (hasKeys !== false) return null;
+  if (!status) return null;
+  if (status.hasKeys || status.secrets?.comfyui) return null;
 
   return (
     <div className="mb-6 rounded-xl border border-amber/30 bg-amber/10 p-4 sm:p-5">
       <div className="flex items-start gap-3">
         <KeyRound className="mt-0.5 size-5 shrink-0 text-amber" aria-hidden />
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-ink-50">Connect your Higgsfield API key to start creating</p>
+          <p className="text-sm font-semibold text-ink-50">
+            Connect Higgsfield API or a ComfyUI Colab GPU worker
+          </p>
           <p className="mt-1 text-sm leading-relaxed text-ink-300">
-            Create a key pair at{" "}
+            Add server-side credentials in{" "}
+            <code className="rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[12px] text-ink-100">
+              .env
+            </code>{" "}
+            for Higgsfield (
             <a
               href="https://cloud.higgsfield.ai"
               target="_blank"
@@ -32,15 +48,22 @@ export function KeysBanner() {
             >
               cloud.higgsfield.ai
             </a>
-            , put it in <code className="rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[12px] text-ink-100">.env</code>, and restart:
+            ) or point{" "}
+            <code className="rounded bg-ink-800 px-1.5 py-0.5 font-mono text-[12px] text-ink-100">
+              COMFYUI_BASE_URL
+            </code>{" "}
+            at your Colab GPU notebook. Local FFmpeg 2D motion fallback remains available at $0 for
+            end-to-end testing.
           </p>
-          <pre className="mt-2.5 overflow-x-auto rounded-lg border border-ink-700 bg-ink-950 p-3 font-mono text-[12px] leading-relaxed text-ink-100">
-{`HF_API_KEY_ID=your_key_id
-HF_API_KEY_SECRET=your_key_secret`}
-          </pre>
-          <p className="mt-2 text-[13px] text-ink-400">
-            Keys stay on your server. The browser never sees them.
-          </p>
+          <div className="mt-2.5 flex flex-wrap items-center gap-3 font-mono text-xs">
+            <Link
+              href="/routing"
+              className="text-lime-400 underline decoration-lime-400/40 underline-offset-2 hover:decoration-lime-400"
+            >
+              Inspect provider health &amp; spend caps →
+            </Link>
+            <span className="text-ink-400">Keys stay strictly server-side.</span>
+          </div>
         </div>
       </div>
     </div>

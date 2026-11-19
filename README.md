@@ -1,82 +1,54 @@
-# Hixfield
+# Vyolab Studio
 
-The Higgsfield create experience as a web app you can clone: camera-controlled video, Soul images, consistent characters and talking avatars, all on the official API with your own key.
+Self-hosted AI creative platform for **Vyolab**, forked from [`Mukhsin0508/hixfield`](https://github.com/Mukhsin0508/hixfield) (MIT).
 
-![A generated soundstage still, lit by a single lime source](public/media/hero-soundstage.webp)
+Preserves Hixfield's **Night Grading Suite** UI (`DESIGN.md`) and all six original studio workflows while adding a multi-provider model router, Higgsfield open-source agent skills, ComfyUI Colab/cloud GPU workers for Hugging Face models, a Supercomputer-style campaign agent, spend guardrails, and approval-gated Postiz social scheduling.
 
-![Camera-controlled video generated through the API](docs/demo.gif)
+## Architecture
 
-→ Camera-controlled video with 50+ live motion presets, up to 2 stacked motions, and start/end frames \
-→ Soul images with 80+ live style presets and 4x batches \
-→ Soul ID character consistency: train once, render the same person in any scene \
-→ Speak talking avatars with automatic WAV conversion \
-→ A persistent local library with honest credit costs on every job \
-→ A schema-driven playground for the wider model catalog: Kling, Veo, Wan, Sora 2, Seedance, Nano Banana and more \
-→ 100% open source. MIT license.
+- **Preserved Hixfield Studio**: Video (DoP camera presets), Image (Soul styles), Characters (Soul ID), Speak (talking avatars with automatic WAV conversion), Library (local SQLite + owned assets), and 49 OpenAPI-verified Playground models (`src/data/models.json`).
+- **Separate Provider Adapters (`src/lib/providers/`)**:
+  - `higgsfield.ts` — Official Higgsfield Platform API (`platform.higgsfield.ai` v1 + v2 + catalogs + concurrency queue).
+  - `higgsfield-agent.ts` — Official Higgsfield Supercomputer Agent API (`api.higgsfield.ai/v1/agent/sessions`, `/messages`, `/interrupt`). Automatically probes entitlement; falls back to Vyolab's orchestrator on `403` (`AgentAccessDeniedError`) or missing keys.
+  - `comfyui.ts` — ComfyUI REST adapter (`/system_stats`, `/upload/image`, `/prompt`, `/history`, `/view`) with parameterized **Wan 2.2 TI2V** and **FLUX.1-schnell** workflows for Hugging Face weights on Colab/cloud GPUs.
+  - `huggingface.ts` — Hugging Face Inference Router adapter (`router.huggingface.co`).
+  - `local-motion.ts` — Deterministic `$0` FFmpeg 2D camera-motion fallback (clearly labeled as 2D motion, not neural diffusion).
+  - `postiz.ts` — Postiz Public API (`/api/public/v1/*`) with a **hard server-side approval gate** (`PublishingApprovalRequiredError` HTTP 403 for any unapproved or rejected draft).
+  - `llm.ts` — Server-side LLM planner (OpenAI-compatible, Gemini, or Hugging Face Router, with deterministic skills-guided fallback).
+- **Higgsfield Open-Source Agent Skills (`vendor/higgsfield-skills/`)**: All 9 MIT-licensed skills synced from [`higgsfield-ai/skills`](https://github.com/higgsfield-ai/skills) (`npm run skills:sync`).
+- **Model Router & Spend Guardrails (`src/lib/router/`, `src/lib/spend.ts`)**: Scores candidates by availability, quality (0–100), and estimated USD cost across strategies (`balanced`, `gpu_first`, `cost`, `quality`, `higgsfield_only`, `comfyui_only`), enforcing daily and monthly USD caps in SQLite `spend_ledger`.
+- **Supercomputer Agent (`/campaigns`)**: Turns a brand brief into scripts, continuity bibles, storyboards, routed keyframe images, image-to-video clips, platform captions, and `pending_approval` social drafts.
 
-| ![Soul render in the Y2K digicam style](public/media/gallery-y2k.webp) | ![Soul render in the neon noir style](public/media/gallery-neon.webp) | ![Soul render in the quiet luxury style](public/media/gallery-luxury.webp) |
-|:--:|:--:|:--:|
-| Y2K digicam | Neon noir | Quiet luxury |
+## Quick Start (Docker)
 
-## Quickstart
-
-You need Docker, or Bun 1.2+ (Node 20+ also works) plus ffmpeg for Speak audio conversion.
-
-```sh
-git clone https://github.com/Mukhsin0508/hixfield.git
-cd hixfield
+```bash
 cp .env.example .env
-docker compose up
+# Add server-side keys (HF_API_KEY_ID / HF_API_KEY_SECRET, COMFYUI_BASE_URL, POSTIZ_API_KEY, etc.)
+
+docker compose up --build
+
+# Optional: include self-hosted Postiz (Postgres + Redis + Postiz on :4007)
+docker compose --profile postiz up --build
 ```
 
-Create an API key pair at [cloud.higgsfield.ai](https://cloud.higgsfield.ai) and paste `HF_API_KEY_ID` and `HF_API_KEY_SECRET` into `.env` before starting. Then open [http://localhost:3000](http://localhost:3000).
+## Connecting a Colab GPU ComfyUI Worker (Hugging Face Models)
 
-Prefer bare metal?
+1. Open [`colab/vyolab_comfyui_worker.ipynb`](./colab/vyolab_comfyui_worker.ipynb) on a Google Colab GPU runtime (T4 / L4 / A100).
+2. Run all cells to pull open-source Hugging Face weights (`Wan 2.2 TI2V 5B`, `FLUX.1-schnell`) and launch ComfyUI behind a tunnel.
+3. Paste the printed URL into `COMFYUI_BASE_URL` in `.env` and restart Vyolab Studio.
 
-```sh
-bun install && bun dev
+## Local Development & Tests
+
+```bash
+npm install
+npm run typecheck
+npm test
+npm run build
+npm run dev
 ```
 
-Two env vars, one command. The motion gallery renders live within two minutes.
+## Security & Operational Guardrails
 
-## How it works
-
-Hixfield is a server-side proxy in front of `platform.higgsfield.ai`. Your key pair never reaches the browser; every upstream call carries `Authorization: Key id:secret` from the server. Jobs follow the API's submit-then-poll pattern, checked every 2 seconds. When a job completes, its output downloads to `./data` immediately, because Higgsfield's asset URLs expire in about seven days; the library owns its files. A local queue keeps you under your plan's concurrency cap, since the API answers overflow with a plain HTTP 400 and no rate-limit headers. Credits are charged only on completed jobs; failed and nsfw-flagged jobs refund automatically.
-
-## Pages
-
-| Route | What it is |
-|---|---|
-| `/` | The landing page |
-| `/create/video` | DoP image-to-video: browse the motion gallery, stack two moves, set frames |
-| `/create/image` | Soul text-to-image with the live style catalog and 4x batches |
-| `/characters` | Train and manage Soul IDs for character consistency |
-| `/speak` | Talking avatars from a portrait and an audio track |
-| `/library` | Every job with its parameters, credit cost, and files on your disk |
-| `/playground` | Schema-driven forms for the wider model catalog |
-
-## Configuration
-
-| Variable | Default | What it does |
-|---|---|---|
-| `HF_API_KEY_ID` | required | Key id from cloud.higgsfield.ai |
-| `HF_API_KEY_SECRET` | required | Key secret. Server-side only, never sent to the browser |
-| `HF_MAX_CONCURRENCY` | `3` | Local queue cap; the API rejects overflow with HTTP 400 |
-| `DATA_DIR` | `./data` | Where the job database and downloaded assets live |
-| `NEXT_PUBLIC_GITHUB_REPO` | `Mukhsin0508/hixfield` | Repo shown on the landing page |
-
-## What this is, what this isn't
-
-This is a self-hosted web app for Higgsfield's official public API. You bring the key pair, your account pays the credits, and only for jobs that complete.
-
-It is not affiliated with Higgsfield AI, and it is not their private stack. Upscale, the VFX library, Cinema Studio and inpainting are not on the public API, so you won't find them here. The playground's model catalog (`src/data/models.json`) is generated from the official OpenAPI spec, which ships in this repo at `docs/higgsfield-openapi.json`; every route and parameter matches the spec, and Speak rides the SDK-documented v1 endpoint.
-
-## Media provenance
-
-Every image and clip in this repo was generated with Higgsfield: Soul stills, then image-to-video for the loops. Nothing is taken from their site or brand assets.
-
-## Contributing
-
-Issues and pull requests are welcome; keep changes honest about what the public API actually supports.
-
-MIT license.
+- All API keys (`HF_API_KEY_ID`, `HF_API_KEY_SECRET`, `COMFYUI_AUTH_TOKEN`, `HUGGINGFACE_TOKEN`, `LLM_API_KEY`, `POSTIZ_API_KEY`) stay strictly server-side and are never serialized to the browser.
+- Every generated social post enters `pending_approval` and cannot be dispatched to Postiz until explicitly approved by a human reviewer.
+- Failed, NSFW, or canceled jobs automatically refund reserved spend in `spend_ledger`.

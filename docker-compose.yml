@@ -1,18 +1,79 @@
-# One-command self-hosting: cp .env.example .env, add your key pair, then
+# Vyolab Self-Hosted AI Creative Platform (forked from Hixfield)
+#
+# Quick start:
+#   cp .env.example .env
 #   docker compose up --build
-# On Linux, run `mkdir -p data` first so the volume is owned by your user.
-# The container runs as the unprivileged node user (uid 1000).
+#
+# With self-hosted Postiz social scheduler:
+#   docker compose --profile postiz up --build
 
 services:
-  hixfield:
+  vyolab:
     build: .
+    container_name: vyolab-studio
     ports:
-      - "3000:3000"
-    env_file: .env
+      - "${PORT:-3000}:3000"
+    env_file:
+      - path: .env
+        required: false
     environment:
       DATA_DIR: /app/data
+      SKILLS_DIR: /app/vendor/higgsfield-skills
     volumes:
-      # The job database and every downloaded asset. Upstream URLs expire in
-      # about 7 days, so this volume is the library's source of truth.
+      # SQLite database (jobs, spend ledger, campaigns, publish approval queue) and downloaded assets.
       - ./data:/app/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/api/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ── Optional Postiz Self-Hosted Stack (`docker compose --profile postiz up`) ──
+  postiz-postgres:
+    image: postgres:17-alpine
+    profiles: ["postiz"]
+    environment:
+      POSTGRES_PASSWORD: ${POSTIZ_DB_PASSWORD:-vyolab_postiz_dev}
+      POSTGRES_USER: ${POSTIZ_DB_USER:-postiz}
+      POSTGRES_DB: ${POSTIZ_DB_NAME:-postiz}
+    volumes:
+      - postiz-postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  postiz-redis:
+    image: redis:7.2-alpine
+    profiles: ["postiz"]
+    volumes:
+      - postiz-redis-data:/data
+    restart: unless-stopped
+
+  postiz:
+    image: ghcr.io/gitroomhq/postiz-app:latest
+    profiles: ["postiz"]
+    depends_on:
+      - postiz-postgres
+      - postiz-redis
+    ports:
+      - "4007:5000"
+    environment:
+      MAIN_URL: ${POSTIZ_MAIN_URL:-http://localhost:4007}
+      FRONTEND_URL: ${POSTIZ_MAIN_URL:-http://localhost:4007}
+      NEXT_PUBLIC_BACKEND_URL: ${POSTIZ_MAIN_URL:-http://localhost:4007}/api
+      JWT_SECRET: ${POSTIZ_JWT_SECRET:-change-this-to-a-long-random-secret-before-prod}
+      DATABASE_URL: postgresql://${POSTIZ_DB_USER:-postiz}:${POSTIZ_DB_PASSWORD:-vyolab_postiz_dev}@postiz-postgres:5432/${POSTIZ_DB_NAME:-postiz}
+      REDIS_URL: redis://postiz-redis:6379
+      BACKEND_INTERNAL_URL: http://localhost:3000
+      IS_GENERAL: "true"
+      STORAGE_PROVIDER: local
+      UPLOAD_DIRECTORY: /uploads
+      NEXT_PUBLIC_UPLOAD_DIRECTORY: /uploads
+    volumes:
+      - postiz-uploads:/uploads
+    restart: unless-stopped
+
+volumes:
+  postiz-postgres-data:
+  postiz-redis-data:
+  postiz-uploads:

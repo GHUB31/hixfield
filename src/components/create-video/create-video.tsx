@@ -4,11 +4,16 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { Clapperboard, X } from "lucide-react";
 import { ApiError, getJSON, postJSON } from "@/lib/fetcher";
 import { useJobPoll } from "@/lib/use-poll";
-import { isTerminalStatus, type JobRecord, type Motion } from "@/lib/higgsfield/types";
+import {
+  isTerminalStatus,
+  type JobRecord,
+  type Motion,
+  type RoutingDecision,
+} from "@/lib/higgsfield/types";
 import { formatCredits, shortId } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Field, Input, Textarea } from "@/components/ui/field";
+import { Field, Input, Select, Textarea } from "@/components/ui/field";
 import { Segmented } from "@/components/ui/segmented";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
@@ -17,11 +22,12 @@ import { StatusBadge } from "@/components/status-badge";
 import { MotionGallery } from "@/components/create-video/motion-gallery";
 
 type Tier = "lite" | "standard" | "turbo";
+type ProviderChoice = "auto" | "higgsfield" | "comfyui" | "huggingface" | "local_motion";
 
 const TIERS: Array<{ value: Tier; label: string; hint: string }> = [
-  { value: "lite", label: "Lite", hint: "Cheapest" },
-  { value: "standard", label: "Standard", hint: "Best quality" },
-  { value: "turbo", label: "Turbo", hint: "Fastest" },
+  { value: "lite", label: "Lite", hint: "Cheapest Higgsfield tier (~$0.14)" },
+  { value: "standard", label: "Standard", hint: "Best quality (~$0.45)" },
+  { value: "turbo", label: "Turbo", hint: "Fastest DoP (~$0.25)" },
 ];
 
 interface SelectedMotion {
@@ -99,11 +105,12 @@ export function CreateVideo() {
   const [endImageUrl, setEndImageUrl] = useState<string | null>(null);
   const [prompt, setPrompt] = useState("");
   const [tier, setTier] = useState<Tier>("standard");
-  // The API's own default is true — the toggle starts where the API starts.
+  const [provider, setProvider] = useState<ProviderChoice>("auto");
   const [enhance, setEnhance] = useState(true);
   const [seed, setSeed] = useState("");
   const promptId = useId();
   const seedId = useId();
+  const providerId = useId();
 
   // Submission and the job it produces
   const [submitting, setSubmitting] = useState(false);
@@ -111,6 +118,7 @@ export function CreateVideo() {
   const [missingKeys, setMissingKeys] = useState(false);
   const [rerunning, setRerunning] = useState(false);
   const [rerunError, setRerunError] = useState<string | null>(null);
+  const [decision, setDecision] = useState<RoutingDecision | null>(null);
   const [job, setJob] = useJobPoll(null);
   const elapsed = useElapsed(job);
 
@@ -123,6 +131,7 @@ export function CreateVideo() {
     try {
       const body: Record<string, unknown> = {
         tier,
+        provider,
         image_url: imageUrl,
         motions: selected.map((s) => ({ id: s.motion.id, strength: s.strength })),
         enhance_prompt: enhance,
@@ -130,8 +139,12 @@ export function CreateVideo() {
       if (prompt.trim()) body.prompt = prompt.trim();
       if (endImageUrl) body.end_image_url = endImageUrl;
       if (seed.trim() !== "") body.seed = Number(seed);
-      const { job: created } = await postJSON<{ job: JobRecord }>("/api/generate/dop", body);
-      setJob(created);
+      const res = await postJSON<{ job: JobRecord; routingDecision?: RoutingDecision }>(
+        "/api/generate/dop",
+        body
+      );
+      setJob(res.job);
+      setDecision(res.routingDecision ?? res.job.routingDecision ?? null);
     } catch (err) {
       if (err instanceof ApiError && err.code === "missing_keys") {
         setMissingKeys(true);
@@ -165,7 +178,8 @@ export function CreateVideo() {
       <header>
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Create video</h1>
         <p className="mt-1.5 text-sm text-ink-300">
-          Pick up to two camera moves, set a first frame, and direct the shot.
+          Pick up to two camera moves, set a first frame, and let the model router dispatch to
+          Higgsfield DoP, ComfyUI GPU, Hugging Face, or local FFmpeg motion.
         </p>
       </header>
 
@@ -176,7 +190,6 @@ export function CreateVideo() {
           className="animate-rise rise-1 order-1 flex flex-col gap-3 lg:order-2 lg:col-span-7"
         >
           {selected.length === 0 ? (
-            /* Keyless or nothing picked yet: the stack rig stays visible, just unarmed. */
             <div className="rounded-xl border border-ink-700 bg-ink-900/60 p-3">
               <div className="flex flex-col gap-3 opacity-60" aria-hidden>
                 {(["A", "B"] as const).map((slot) => (
@@ -275,7 +288,25 @@ export function CreateVideo() {
               />
             </Field>
 
-            <Field label="Tier">
+            <Field
+              label="Provider route"
+              htmlFor={providerId}
+              help="Auto scores quality, availability, and USD cost across configured adapters."
+            >
+              <Select
+                id={providerId}
+                value={provider}
+                onChange={(e) => setProvider(e.target.value as ProviderChoice)}
+              >
+                <option value="auto">Auto · Vyolab Model Router</option>
+                <option value="higgsfield">Higgsfield Official API (DoP)</option>
+                <option value="comfyui">ComfyUI · Wan 2.2 (Colab / Cloud GPU · $0)</option>
+                <option value="huggingface">Hugging Face Inference Router</option>
+                <option value="local_motion">Local FFmpeg 2D Motion ($0 fallback)</option>
+              </Select>
+            </Field>
+
+            <Field label="Higgsfield DoP tier">
               <Segmented<Tier> options={TIERS} value={tier} onChange={setTier} label="Tier" />
               {activeTier && <p className="mt-1.5 text-[13px] text-ink-400">{activeTier.hint}</p>}
             </Field>
@@ -287,7 +318,7 @@ export function CreateVideo() {
                 id={seedId}
                 type="number"
                 inputMode="numeric"
-                min={0}
+                min={1}
                 max={1000000}
                 className="font-mono"
                 placeholder="Random"
@@ -308,7 +339,7 @@ export function CreateVideo() {
               </Button>
               {missingKeys && (
                 <p className="mt-3 text-sm text-amber" role="status">
-                  Add your Higgsfield API key first, instructions are in the banner above.
+                  Add your Higgsfield API key first, or select Auto / ComfyUI / Local Motion.
                 </p>
               )}
               {submitError && (
@@ -324,15 +355,25 @@ export function CreateVideo() {
               <EmptyState
                 icon={<Clapperboard aria-hidden />}
                 title="No video yet"
-                body="Add an image, choose up to two camera moves, get your shot."
+                body="Add an image, choose camera moves or a provider route, and generate your shot."
               />
             ) : (
               <div className="rounded-xl border border-ink-700 bg-ink-900 p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                   <StatusBadge status={job.status} />
                   <span className="font-mono text-xs text-ink-400">{shortId(job.id)}</span>
+                  {job.provider && (
+                    <span className="rounded-md border border-ink-700 bg-ink-850 px-2 py-0.5 font-mono text-[11px] text-ink-300">
+                      {job.provider}
+                    </span>
+                  )}
                   <span className="ml-auto flex items-center gap-3">
                     {active && <span className="font-mono text-xs text-ink-300">{elapsed}s</span>}
+                    {job.estimatedCostUsd != null && (
+                      <span className="font-mono text-xs text-ink-300">
+                        est. ${job.estimatedCostUsd.toFixed(2)}
+                      </span>
+                    )}
                     {job.cost != null && (
                       <span className="font-mono text-xs text-ink-300">
                         {formatCredits(job.cost)} cr
@@ -341,11 +382,15 @@ export function CreateVideo() {
                   </span>
                 </div>
 
+                {decision && (
+                  <p className="mt-2 font-mono text-[11px] text-ink-400">{decision.reason}</p>
+                )}
+
                 {job.status === "waiting" && (
-                  <p className="mt-3 text-sm text-ink-300">Waiting for a free slot on your plan.</p>
+                  <p className="mt-3 text-sm text-ink-300">Waiting for a free concurrency slot.</p>
                 )}
                 {job.status === "queued" && (
-                  <p className="mt-3 text-sm text-ink-300">Queued on Higgsfield.</p>
+                  <p className="mt-3 text-sm text-ink-300">Queued on {job.provider ?? "upstream"}.</p>
                 )}
                 {job.status === "in_progress" && (
                   <p className="mt-3 text-sm text-ink-300">Rendering your shot.</p>

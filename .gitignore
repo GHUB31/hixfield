@@ -143,7 +143,7 @@ vite.config.ts.timestamp-*
 .vite/
 
 # Hixfield local data: job DB + downloaded generation assets
-data/
+/data/
 
 # Impeccable review captures
 .impeccable/review/

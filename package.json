@@ -1,14 +1,18 @@
 {
-  "name": "hixfield",
-  "version": "0.1.0",
+  "name": "vyolab-studio",
+  "version": "1.0.0",
   "private": true,
-  "description": "Open-source Higgsfield clone — cinematic camera-controlled AI video, Soul-style images, character consistency, and talking avatars on the official Higgsfield API.",
+  "description": "Vyolab self-hosted AI creative platform (forked from Hixfield) — Higgsfield API & Skills, ComfyUI/Hugging Face GPU routing, Supercomputer campaign agent, spend guardrails, and Postiz approval publishing.",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "models:generate": "node scripts/generate-models-catalog.mjs",
+    "skills:sync": "node scripts/sync-higgsfield-skills.mjs"
   },
   "dependencies": {
     "@higgsfield/client": "^0.2.1",
@@ -26,6 +30,7 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "tailwindcss": "^4.1.13",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

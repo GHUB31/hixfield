@@ -5,7 +5,7 @@ import { CopyCommand } from "@/components/landing/copy-command";
 import { GitHubStars } from "@/components/landing/github-stars";
 import { LoopTile } from "@/components/landing/loop-tile";
 
-const REPO = process.env.NEXT_PUBLIC_GITHUB_REPO ?? "Mukhsin0508/hixfield";
+const REPO = process.env.NEXT_PUBLIC_GITHUB_REPO ?? "GHUB31/hixfield";
 
 export default function LandingPage() {
   return (
@@ -15,15 +15,27 @@ export default function LandingPage() {
         <HeroVideo />
 
         <header className="relative z-10 flex items-center justify-between px-5 py-5 sm:px-10">
-          <span className="text-base font-bold tracking-wide text-ink-50" style={{ fontStretch: "125%" }}>
-            HIXFIELD<span className="text-lime-400">.</span>
-          </span>
+          <div className="flex items-baseline gap-2.5">
+            <span
+              className="text-base font-bold tracking-wide text-ink-50"
+              style={{ fontStretch: "125%" }}
+            >
+              VYOLAB<span className="text-lime-400">.</span>
+            </span>
+            <span className="font-mono text-[11px] text-ink-400">Hixfield core</span>
+          </div>
           <nav className="flex items-center gap-1 text-sm">
+            <Link
+              href="/campaigns"
+              className="rounded-lg px-3.5 py-2 text-ink-100 transition-colors hover:bg-ink-800/70 hover:text-ink-50"
+            >
+              Supercomputer Agent
+            </Link>
             <Link
               href="/create/video"
               className="rounded-lg px-3.5 py-2 text-ink-100 transition-colors hover:bg-ink-800/70 hover:text-ink-50"
             >
-              Open the studio
+              Open studio
             </Link>
             <a
               href={`https://github.com/${REPO}`}
@@ -41,44 +53,46 @@ export default function LandingPage() {
             className="text-[clamp(3.5rem,11vw,8.5rem)] font-bold leading-[0.92] tracking-tight text-ink-50"
             style={{ fontStretch: "125%" }}
           >
-            HIXFIELD
+            VYOLAB
           </h1>
           <p className="rise-1 mt-5 max-w-2xl animate-rise text-lg leading-relaxed text-ink-100 sm:text-xl">
-            The Higgsfield create experience, open-sourced. Camera-controlled video, Soul-style
-            images, consistent characters and talking avatars, running on the official API with
-            your own key.
+            Self-hosted AI creative platform forked from Hixfield. Camera-controlled video,
+            Higgsfield official API &amp; open-source skills, ComfyUI Colab/cloud GPUs, a
+            Supercomputer campaign agent, spend caps, and human-approved Postiz scheduling.
           </p>
           <div className="rise-2 mt-8 flex flex-wrap items-center gap-3 animate-rise">
-            <CopyCommand command={`git clone https://github.com/${REPO}.git`} display="git clone …/hixfield.git" />
+            <CopyCommand
+              command={`git clone https://github.com/${REPO}.git`}
+              display={`git clone …/${REPO.split("/")[1] ?? "hixfield"}.git`}
+            />
             <GitHubStars />
             <Link
-              href="/create/video"
+              href="/campaigns"
               className="inline-flex h-12 items-center gap-2 rounded-lg bg-lime-400 px-5 text-[15px] font-semibold text-ink-950 transition-colors hover:bg-lime-300"
             >
-              Try the studio
+              Launch studio
               <ArrowRight className="size-4" aria-hidden />
             </Link>
           </div>
           <p className="rise-3 mt-6 animate-rise font-mono text-xs tracking-wide text-ink-300">
-            MIT license · two env vars · your credits, your files
+            server-side keys · GPU/API model router · spend ledger · Postiz approval gate
           </p>
         </div>
 
         <p className="absolute bottom-4 right-5 z-10 hidden font-mono text-[11px] text-ink-400 sm:block">
-          background: one Soul still, one camera move, generated with Higgsfield
+          background: Soul still + camera move · Hixfield Night Grading Suite
         </p>
       </section>
 
       {/* ── The mechanism ────────────────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-5 py-20 sm:px-10 sm:py-28">
         <h2 className="max-w-2xl text-3xl font-semibold tracking-tight text-ink-50 sm:text-4xl">
-          Pick a camera move. Stack two. Get the shot.
+          Pick a camera move. Route to GPU or API. Ship with approval.
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-300">
-          Hixfield pulls Higgsfield&apos;s live motion catalog: more than fifty named camera
-          presets, each with a looping preview. Crash Zoom, Dolly Zoom, 360 Orbit, FPV Drone,
-          Bullet Time. Choose up to two, set how hard each one hits, add a first frame, and the
-          DoP model renders it.
+          Every Hixfield studio surface stays intact — DoP camera presets, Soul styles, Characters,
+          Speak, Library, and 49 Playground models — now backed by Vyolab&apos;s model router,
+          ComfyUI Hugging Face workers, open-source Higgsfield skills, and Postiz publishing review.
         </p>
 
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -102,102 +116,67 @@ export default function LandingPage() {
             aspect="aspect-video sm:aspect-auto sm:h-full"
           />
         </div>
-        <p className="mt-4 text-xs leading-relaxed text-ink-400">
-          All three clips are generated stills pushed through image-to-video. Nothing here came
-          from a stock library.
-        </p>
       </section>
 
-      {/* ── Soul ─────────────────────────────────────────────────────── */}
+      {/* ── Platform Architecture ────────────────────────────────────── */}
       <section className="border-t border-ink-800 bg-ink-900/40">
         <div className="mx-auto max-w-6xl px-5 py-20 sm:px-10 sm:py-28">
           <h2 className="max-w-2xl text-3xl font-semibold tracking-tight text-ink-50 sm:text-4xl">
-            Eighty aesthetics, four frames at a time.
+            Brief to approved schedule in one self-hosted stack.
           </h2>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-300">
-            Soul&apos;s style catalog loads live with previews. Y2K digicams, quiet luxury, CCTV,
-            neon noir, party flash. Write one prompt, batch four renders, download the keepers.
-          </p>
-
-          <div className="mt-10 columns-2 gap-4 md:columns-3 [&>figure]:mb-4 [&>figure]:break-inside-avoid">
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {[
-              { src: "/media/gallery-y2k.webp", label: "Y2K DIGICAM" },
-              { src: "/media/gallery-neon.webp", label: "NEON NOIR" },
-              { src: "/media/gallery-luxury.webp", label: "QUIET LUXURY" },
-              { src: "/media/gallery-party.webp", label: "PARTY FLASH" },
-              { src: "/media/gallery-cctv.webp", label: "CCTV" },
-            ].map((img) => (
-              <figure
-                key={img.src}
-                className="relative overflow-hidden rounded-xl border border-ink-700"
+              {
+                img: "/media/gallery-y2k.webp",
+                title: "Supercomputer Agent",
+                href: "/campaigns",
+                body: "Probes Higgsfield's official Supercomputer Agent API first; falls back seamlessly to Vyolab's multi-stage orchestrator for scripts, storyboards, images, videos, and captions.",
+              },
+              {
+                img: "/media/gallery-neon.webp",
+                title: "Model Router & Spend Guardrails",
+                href: "/routing",
+                body: "Selects between Colab/cloud ComfyUI GPUs, Hugging Face Router, and Higgsfield API by quality, availability, and USD cost with hard daily & monthly caps.",
+              },
+              {
+                img: "/media/lens-macro.webp",
+                title: "Higgsfield Open-Source Skills",
+                href: "/skills",
+                body: "Nine vendored MIT skills from higgsfield-ai/skills power prompt direction, product photoshoots, faceless video hooks, and consistent brandkits.",
+              },
+              {
+                img: "/media/hall-wide.webp",
+                title: "Postiz Publishing Approval Gate",
+                href: "/publish",
+                body: "Every generated social post lands in pending_approval. Nothing reaches Postiz until a human approves the caption, asset, channel, and time slot.",
+              },
+            ].map(({ img, title, body, href }) => (
+              <Link
+                key={title}
+                href={href}
+                className="group relative block min-h-64 overflow-hidden rounded-xl border border-ink-700 transition-colors hover:border-ink-600"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.src} alt={`Soul render in the ${img.label.toLowerCase()} style`} className="w-full" loading="lazy" />
-                <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-950/95 to-transparent px-3.5 pb-3 pt-10">
-                  <span className="font-mono text-xs tracking-wide text-lime-400">{img.label}</span>
-                </figcaption>
-              </figure>
+                <img
+                  src={img}
+                  alt=""
+                  loading="lazy"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-ink-950/95 via-ink-950/65 to-ink-950/25"
+                  aria-hidden
+                />
+                <div className="relative flex h-full min-h-64 flex-col justify-end p-5">
+                  <h3 className="text-lg font-semibold text-ink-50 group-hover:text-lime-400">
+                    {title}
+                  </h3>
+                  <p className="mt-1.5 max-w-md text-[15px] leading-relaxed text-ink-100">{body}</p>
+                </div>
+              </Link>
             ))}
           </div>
-          <p className="mt-2 text-xs text-ink-400">Soul renders, straight from the API.</p>
         </div>
-      </section>
-
-      {/* ── The rest of the product ──────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-5 py-20 sm:px-10 sm:py-28">
-        <h2 className="max-w-2xl text-3xl font-semibold tracking-tight text-ink-50 sm:text-4xl">
-          The whole create suite, not a demo.
-        </h2>
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {[
-            {
-              img: "/media/gallery-y2k.webp",
-              title: "Characters",
-              body: "Train a Soul ID from a handful of photos, then render the same person in any scene, any style.",
-            },
-            {
-              img: "/media/gallery-neon.webp",
-              title: "Speak",
-              body: "A portrait plus a voice track becomes a talking avatar. MP3 and friends convert to WAV on the fly.",
-            },
-            {
-              img: "/media/lens-macro.webp",
-              title: "Library",
-              body: "Every job lands on your disk with its parameters and credit cost. Higgsfield's asset links expire in seven days. Yours don't.",
-            },
-            {
-              img: "/media/hall-wide.webp",
-              title: "Playground",
-              body: "A schema-driven form for the wider catalog: Kling, Veo, Wan, Sora 2, Seedance, Nano Banana and more.",
-            },
-          ].map(({ img, title, body }) => (
-            <figure
-              key={title}
-              className="relative min-h-64 overflow-hidden rounded-xl border border-ink-700"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={img}
-                alt=""
-                loading="lazy"
-                className="absolute inset-0 size-full object-cover"
-              />
-              <div
-                className="absolute inset-0 bg-gradient-to-t from-ink-950/95 via-ink-950/60 to-ink-950/20"
-                aria-hidden
-              />
-              <figcaption className="relative flex h-full min-h-64 flex-col justify-end p-5">
-                <h3 className="text-lg font-semibold text-ink-50">{title}</h3>
-                <p className="mt-1.5 max-w-md text-[15px] leading-relaxed text-ink-100">{body}</p>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-        <p className="mt-3 text-xs text-ink-400">Tile backgrounds are Soul renders too.</p>
-        <p className="mt-12 max-w-2xl border-t border-ink-800 pt-6 text-sm leading-relaxed text-ink-300">
-          Costs stay visible. Hixfield shows the credit price the API reports on every job, and
-          only completed jobs are charged. Failed or flagged renders refund automatically.
-        </p>
       </section>
 
       {/* ── Run it (the lime block) ──────────────────────────────────── */}
@@ -205,36 +184,35 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl px-5 py-20 sm:px-10 sm:py-24">
           <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
             <div>
-              <h2 className="text-4xl font-bold tracking-tight sm:text-5xl" style={{ fontStretch: "115%" }}>
-                Run it tonight.
+              <h2
+                className="text-4xl font-bold tracking-tight sm:text-5xl"
+                style={{ fontStretch: "115%" }}
+              >
+                Self-host tonight.
               </h2>
               <p className="mt-4 max-w-md text-base leading-relaxed text-ink-950/80">
-                Two env vars and one command. Paste a key pair from cloud.higgsfield.ai and the
-                motion gallery is on your screen inside two minutes.
+                One Docker Compose stack for Vyolab Studio, optional Postiz scheduling profile, and
+                a Colab GPU ComfyUI notebook for zero-API-cost Hugging Face inference.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href={`https://github.com/${REPO}`}
-                  target="_blank"
-                  rel="noreferrer"
+                <Link
+                  href="/create/video"
                   className="inline-flex h-12 items-center gap-2 rounded-lg bg-ink-950 px-6 text-[15px] font-semibold text-lime-400 transition-colors hover:bg-ink-800"
                 >
-                  Get the source
+                  Open Vyolab Studio
                   <ArrowRight className="size-4" aria-hidden />
-                </a>
+                </Link>
               </div>
-              <p className="mt-6 text-sm text-ink-950/70">
-                MIT license. The whole thing, no gated tier.
-              </p>
             </div>
             <pre className="overflow-x-auto rounded-xl bg-ink-950 p-6 font-mono text-[13px] leading-loose text-ink-100 shadow-[0_16px_48px_rgba(9,9,11,0.35)]">
-              <code>{`git clone https://github.com/${REPO}.git
-cd hixfield
-cp .env.example .env   # paste HF_API_KEY_ID + HF_API_KEY_SECRET
-docker compose up
+              <code>{`cp .env.example .env
+docker compose up --build
 
-# prefer bare metal?
-bun install && bun dev`}</code>
+# with self-hosted Postiz scheduler
+docker compose --profile postiz up --build
+
+# run automated test suite
+npm test`}</code>
             </pre>
           </div>
         </div>
@@ -242,37 +220,16 @@ bun install && bun dev`}</code>
 
       {/* ── Footer ───────────────────────────────────────────────────── */}
       <footer className="border-t border-ink-800">
-        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-10">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-            <div>
-              <h3 className="text-sm font-semibold text-ink-50">What this is</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-300">
-                A self-hosted web app for Higgsfield&apos;s official public API
-                (platform.higgsfield.ai). You bring the key pair. Your account pays the credits,
-                and only for jobs that complete.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-ink-50">What this isn&apos;t</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-300">
-                Affiliated with Higgsfield AI. It also isn&apos;t their private stack: upscale,
-                the VFX library, Cinema Studio and inpainting are not on the public API, so you
-                won&apos;t find them here.
-              </p>
-            </div>
-          </div>
-          <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-ink-800 pt-6">
-            <span className="text-sm font-bold tracking-wide text-ink-50" style={{ fontStretch: "125%" }}>
-              HIXFIELD<span className="text-lime-400">.</span>
-            </span>
-            <p className="font-mono text-xs text-ink-400">
-              MIT ·{" "}
-              <a href={`https://github.com/${REPO}`} target="_blank" rel="noreferrer" className="text-ink-300 underline decoration-ink-600 underline-offset-2 transition-colors hover:text-lime-400">
-                github.com/{REPO}
-              </a>{" "}
-              · built with the API it wraps
-            </p>
-          </div>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-10 sm:px-10">
+          <span
+            className="text-sm font-bold tracking-wide text-ink-50"
+            style={{ fontStretch: "125%" }}
+          >
+            VYOLAB<span className="text-lime-400">.</span>
+          </span>
+          <p className="font-mono text-xs text-ink-400">
+            Forked from Mukhsin0508/hixfield (MIT) · Skills from higgsfield-ai/skills (MIT)
+          </p>
         </div>
       </footer>
     </div>

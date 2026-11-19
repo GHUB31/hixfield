@@ -1,0 +1,2609 @@
+{
+  "generatedAt": "2026-11-19",
+  "count": 49,
+  "models": [
+    {
+      "id": "higgsfield-ai--dop--turbo",
+      "family": "Higgsfield",
+      "label": "Dop · Turbo",
+      "endpoint": "/higgsfield-ai/dop/turbo",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "seed",
+          "label": "Seed",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "min": 1,
+          "max": 1000000,
+          "step": 1
+        },
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_url",
+          "label": "First frame image",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "end_image_url",
+          "label": "Last frame image",
+          "type": "image",
+          "required": false,
+          "wrap": "bare"
+        },
+        {
+          "name": "enhance_prompt",
+          "label": "Enhance Prompt",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "higgsfield-ai--dop--lite",
+      "family": "Higgsfield",
+      "label": "Dop · Lite",
+      "endpoint": "/higgsfield-ai/dop/lite",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "seed",
+          "label": "Seed",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "min": 1,
+          "max": 1000000,
+          "step": 1
+        },
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_url",
+          "label": "First frame image",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "end_image_url",
+          "label": "Last frame image",
+          "type": "image",
+          "required": false,
+          "wrap": "bare"
+        },
+        {
+          "name": "enhance_prompt",
+          "label": "Enhance Prompt",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "higgsfield-ai--dop--standard",
+      "family": "Higgsfield",
+      "label": "Dop · Standard",
+      "endpoint": "/higgsfield-ai/dop/standard",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "seed",
+          "label": "Seed",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "min": 1,
+          "max": 1000000,
+          "step": 1
+        },
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_url",
+          "label": "First frame image",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "end_image_url",
+          "label": "Last frame image",
+          "type": "image",
+          "required": false,
+          "wrap": "bare"
+        },
+        {
+          "name": "enhance_prompt",
+          "label": "Enhance Prompt",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "higgsfield-ai--popcorn--auto",
+      "family": "Higgsfield",
+      "label": "Popcorn · Auto",
+      "endpoint": "/higgsfield-ai/popcorn/auto",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "seed",
+          "label": "Seed",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "min": 1,
+          "max": 1000000,
+          "step": 1
+        },
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_urls",
+          "label": "Image references",
+          "type": "images",
+          "required": false,
+          "wrap": "bare",
+          "max": 8
+        },
+        {
+          "name": "num_images",
+          "label": "Output images count",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 1,
+          "max": 8,
+          "step": 1
+        },
+        {
+          "name": "resolution",
+          "label": "Quality",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720p",
+            "1600p"
+          ],
+          "default": "720p"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "1:1",
+            "4:3",
+            "3:4",
+            "3:2",
+            "2:3",
+            "16:9",
+            "9:16"
+          ],
+          "default": "4:3"
+        }
+      ]
+    },
+    {
+      "id": "higgsfield-ai--soul--character",
+      "family": "Higgsfield",
+      "label": "Soul · Character",
+      "endpoint": "/higgsfield-ai/soul/character",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "seed",
+          "label": "Seed",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "min": 1,
+          "max": 1000000,
+          "step": 1
+        },
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "style_id",
+          "label": "Soul Style",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "batch_size",
+          "label": "Result images",
+          "type": "select",
+          "required": false,
+          "options": [
+            "1",
+            "4"
+          ],
+          "default": "1",
+          "coerce": "number"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720p",
+            "1080p"
+          ],
+          "default": "720p"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "9:16",
+            "16:9",
+            "4:3",
+            "3:4",
+            "1:1",
+            "2:3",
+            "3:2"
+          ],
+          "default": "4:3"
+        },
+        {
+          "name": "enhance_prompt",
+          "label": "Enhance Prompt",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        },
+        {
+          "name": "style_strength",
+          "label": "Style strength",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        {
+          "name": "custom_reference_id",
+          "label": "Character ID",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "image_reference_url",
+          "label": "Image reference url",
+          "type": "url",
+          "required": false
+        },
+        {
+          "name": "custom_reference_strength",
+          "label": "Character strength",
+          "type": "number",
+          "required": true,
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        }
+      ]
+    },
+    {
+      "id": "higgsfield-ai--soul--reference",
+      "family": "Higgsfield",
+      "label": "Soul · Reference",
+      "endpoint": "/higgsfield-ai/soul/reference",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "seed",
+          "label": "Seed",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "min": 1,
+          "max": 1000000,
+          "step": 1
+        },
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "style_id",
+          "label": "Soul Style",
+          "type": "text",
+          "required": false
+        },
+        {
+          "name": "batch_size",
+          "label": "Result images",
+          "type": "select",
+          "required": false,
+          "options": [
+            "1",
+            "4"
+          ],
+          "default": "1",
+          "coerce": "number"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720p",
+            "1080p"
+          ],
+          "default": "720p"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "9:16",
+            "16:9",
+            "4:3",
+            "3:4",
+            "1:1",
+            "2:3",
+            "3:2"
+          ],
+          "default": "4:3"
+        },
+        {
+          "name": "enhance_prompt",
+          "label": "Enhance Prompt",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        },
+        {
+          "name": "style_strength",
+          "label": "Style strength",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        {
+          "name": "image_reference_url",
+          "label": "Image reference url",
+          "type": "url",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "higgsfield-ai--soul--standard",
+      "family": "Higgsfield",
+      "label": "Soul · Standard",
+      "endpoint": "/higgsfield-ai/soul/standard",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "num_images",
+          "label": "Num Images",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 1,
+          "max": 4,
+          "step": 1
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "2K",
+            "4K"
+          ],
+          "default": "2K"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "1:1",
+            "4:3",
+            "3:4",
+            "3:2",
+            "2:3",
+            "5:4",
+            "4:5",
+            "16:9",
+            "9:16",
+            "21:9"
+          ],
+          "default": "4:3"
+        }
+      ]
+    },
+    {
+      "id": "veo3.1",
+      "family": "Google Veo 3.1",
+      "label": "Google Veo 3.1",
+      "endpoint": "/veo3.1",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "6",
+            "8"
+          ],
+          "default": "6"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": true,
+          "options": [
+            "720",
+            "1080"
+          ],
+          "default": "720"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": true,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "generate_audio",
+          "label": "Generate audio",
+          "type": "boolean",
+          "required": true,
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "veo3.1--image-to-video",
+      "family": "Google Veo 3.1",
+      "label": "Image To Video",
+      "endpoint": "/veo3.1/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "6",
+            "8"
+          ],
+          "default": "6"
+        },
+        {
+          "name": "image_url",
+          "label": "Image",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720",
+            "1080"
+          ],
+          "default": "720"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "generate_audio",
+          "label": "Generate audio",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "veo3.1--first-last-frame-to-video",
+      "family": "Google Veo 3.1",
+      "label": "First Last Frame To Video",
+      "endpoint": "/veo3.1/first-last-frame-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "6",
+            "8"
+          ],
+          "default": "6"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720",
+            "1080"
+          ],
+          "default": "720"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "generate_audio",
+          "label": "Generate audio",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        {
+          "name": "last_frame_url",
+          "label": "Image",
+          "type": "url",
+          "required": true
+        },
+        {
+          "name": "first_frame_url",
+          "label": "Image",
+          "type": "url",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "veo3.1--fast--image-to-video",
+      "family": "Google Veo 3.1",
+      "label": "Fast · Image To Video",
+      "endpoint": "/veo3.1/fast/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "6",
+            "8"
+          ],
+          "default": "6"
+        },
+        {
+          "name": "image_url",
+          "label": "Image",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720",
+            "1080"
+          ],
+          "default": "720"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "generate_audio",
+          "label": "Generate audio",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "veo3.1--fast",
+      "family": "Google Veo 3.1",
+      "label": "Fast",
+      "endpoint": "/veo3.1/fast",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "6",
+            "8"
+          ],
+          "default": "6"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": true,
+          "options": [
+            "720",
+            "1080"
+          ],
+          "default": "720"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": true,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "generate_audio",
+          "label": "Generate audio",
+          "type": "boolean",
+          "required": true,
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "veo3.1--fast--first-last-frame-to-video",
+      "family": "Google Veo 3.1",
+      "label": "Fast · First Last Frame To Video",
+      "endpoint": "/veo3.1/fast/first-last-frame-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "6",
+            "8"
+          ],
+          "default": "6"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720",
+            "1080"
+          ],
+          "default": "720"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "generate_audio",
+          "label": "Generate audio",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        },
+        {
+          "name": "last_frame_url",
+          "label": "Image",
+          "type": "url",
+          "required": true
+        },
+        {
+          "name": "first_frame_url",
+          "label": "Image",
+          "type": "url",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "veo3.1--reference-to-video",
+      "family": "Google Veo 3.1",
+      "label": "Reference To Video",
+      "endpoint": "/veo3.1/reference-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "6",
+            "8"
+          ],
+          "default": "6"
+        },
+        {
+          "name": "image_urls",
+          "label": "Image Urls",
+          "type": "images",
+          "required": true,
+          "wrap": "bare",
+          "max": 3
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720",
+            "1080"
+          ],
+          "default": "720"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "generate_audio",
+          "label": "Generate audio",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "bytedance--seedance--v1--lite--image-to-video",
+      "family": "ByteDance Seedance",
+      "label": "Seedance · V1 · Lite · Image To Video",
+      "endpoint": "/bytedance/seedance/v1/lite/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "number",
+          "required": false,
+          "default": 5,
+          "min": 2,
+          "max": 12,
+          "step": 1
+        },
+        {
+          "name": "image_url",
+          "label": "Image",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "480",
+            "720",
+            "1080"
+          ],
+          "default": "1080"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16",
+            "4:3",
+            "3:4",
+            "1:1",
+            "21:9"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "camera_fixed",
+          "label": "Camera fixed",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "bytedance--seedance--v1--lite--text-to-video",
+      "family": "ByteDance Seedance",
+      "label": "Seedance · V1 · Lite · Text To Video",
+      "endpoint": "/bytedance/seedance/v1/lite/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "number",
+          "required": false,
+          "default": 5,
+          "min": 2,
+          "max": 12,
+          "step": 1
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "480",
+            "720",
+            "1080"
+          ],
+          "default": "720"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16",
+            "4:3",
+            "3:4",
+            "1:1",
+            "21:9"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "camera_fixed",
+          "label": "Camera fixed",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "bytedance--seedance--v1--pro--fast--image-to-video",
+      "family": "ByteDance Seedance",
+      "label": "Seedance · V1 · Pro · Fast · Image To Video",
+      "endpoint": "/bytedance/seedance/v1/pro/fast/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "number",
+          "required": false,
+          "default": 5,
+          "min": 2,
+          "max": 12,
+          "step": 1
+        },
+        {
+          "name": "image_url",
+          "label": "Image",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "480",
+            "720",
+            "1080"
+          ],
+          "default": "1080"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16",
+            "4:3",
+            "3:4",
+            "1:1",
+            "21:9"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "camera_fixed",
+          "label": "Camera fixed",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "bytedance--seedance--v1--pro--fast--text-to-video",
+      "family": "ByteDance Seedance",
+      "label": "Seedance · V1 · Pro · Fast · Text To Video",
+      "endpoint": "/bytedance/seedance/v1/pro/fast/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "number",
+          "required": false,
+          "default": 5,
+          "min": 2,
+          "max": 12,
+          "step": 1
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "480",
+            "720",
+            "1080"
+          ],
+          "default": "1080"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16",
+            "4:3",
+            "3:4",
+            "1:1",
+            "21:9"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "camera_fixed",
+          "label": "Camera fixed",
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      ]
+    },
+    {
+      "id": "flux-pro--kontext--max--text-to-image",
+      "family": "Flux Pro",
+      "label": "Kontext · Max · Text To Image",
+      "endpoint": "/flux-pro/kontext/max/text-to-image",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "seed",
+          "label": "Seed",
+          "type": "number",
+          "required": false,
+          "min": 1,
+          "max": 1000000,
+          "step": 1,
+          "help": "Random seed for reproducibility"
+        },
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true,
+          "help": "Text prompt for image generation"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "4:3",
+            "1:1",
+            "3:4",
+            "9:16",
+            "2:3",
+            "1:2",
+            "2:1",
+            "4:5",
+            "3:2"
+          ],
+          "default": "16:9"
+        },
+        {
+          "name": "safety_tolerance",
+          "label": "Safety Tolerance",
+          "type": "number",
+          "required": false,
+          "default": 6,
+          "min": 0,
+          "max": 6,
+          "step": 1,
+          "help": "Safety tolerance level (0-6)"
+        }
+      ]
+    },
+    {
+      "id": "kling-video--v2.1--master--image-to-video",
+      "family": "Kling Video",
+      "label": "V2.1 · Master · Image To Video",
+      "endpoint": "/kling-video/v2.1/master/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "5",
+            "10"
+          ],
+          "default": "5",
+          "coerce": "number"
+        },
+        {
+          "name": "cfg_scale",
+          "label": "CFG Scale",
+          "type": "number",
+          "required": false,
+          "default": 0.5,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "negative_prompt",
+          "label": "Negative Prompt",
+          "type": "textarea",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "kling-video--v2.1--master--text-to-video",
+      "family": "Kling Video",
+      "label": "V2.1 · Master · Text To Video",
+      "endpoint": "/kling-video/v2.1/master/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "5",
+            "10"
+          ],
+          "default": "5",
+          "coerce": "number"
+        },
+        {
+          "name": "cfg_scale",
+          "label": "CFG Scale",
+          "type": "number",
+          "required": false,
+          "default": 0.5,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "1:1",
+            "16:9",
+            "9:16"
+          ],
+          "default": "1:1"
+        },
+        {
+          "name": "negative_prompt",
+          "label": "Negative Prompt",
+          "type": "textarea",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "kling-video--v2.1--pro--image-to-video",
+      "family": "Kling Video",
+      "label": "V2.1 · Pro · Image To Video",
+      "endpoint": "/kling-video/v2.1/pro/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "5",
+            "10"
+          ],
+          "default": "5",
+          "coerce": "number"
+        },
+        {
+          "name": "cfg_scale",
+          "label": "CFG Scale",
+          "type": "number",
+          "required": false,
+          "default": 0.5,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "negative_prompt",
+          "label": "Negative Prompt",
+          "type": "textarea",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "kling-video--v2.1--standard--image-to-video",
+      "family": "Kling Video",
+      "label": "V2.1 · Standard · Image To Video",
+      "endpoint": "/kling-video/v2.1/standard/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "5",
+            "10"
+          ],
+          "default": "5",
+          "coerce": "number"
+        },
+        {
+          "name": "cfg_scale",
+          "label": "CFG Scale",
+          "type": "number",
+          "required": false,
+          "default": 0.5,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "negative_prompt",
+          "label": "Negative Prompt",
+          "type": "textarea",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "kling-video--v2.5-turbo--pro--image-to-video",
+      "family": "Kling Video",
+      "label": "V2.5 Turbo · Pro · Image To Video",
+      "endpoint": "/kling-video/v2.5-turbo/pro/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "5",
+            "10"
+          ],
+          "default": "5",
+          "coerce": "number"
+        },
+        {
+          "name": "cfg_scale",
+          "label": "CFG Scale",
+          "type": "number",
+          "required": false,
+          "default": 0.5,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "negative_prompt",
+          "label": "Negative Prompt",
+          "type": "textarea",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "kling-video--v2.5-turbo--pro--text-to-video",
+      "family": "Kling Video",
+      "label": "V2.5 Turbo · Pro · Text To Video",
+      "endpoint": "/kling-video/v2.5-turbo/pro/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "5",
+            "10"
+          ],
+          "default": "5",
+          "coerce": "number"
+        },
+        {
+          "name": "cfg_scale",
+          "label": "CFG Scale",
+          "type": "number",
+          "required": false,
+          "default": 0.5,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        {
+          "name": "negative_prompt",
+          "label": "Negative Prompt",
+          "type": "textarea",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "kling-video--v2.5-turbo--standard--image-to-video",
+      "family": "Kling Video",
+      "label": "V2.5 Turbo · Standard · Image To Video",
+      "endpoint": "/kling-video/v2.5-turbo/standard/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "5",
+            "10"
+          ],
+          "default": "5",
+          "coerce": "number"
+        },
+        {
+          "name": "cfg_scale",
+          "label": "CFG Scale",
+          "type": "number",
+          "required": false,
+          "default": 0.5,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "negative_prompt",
+          "label": "Negative Prompt",
+          "type": "textarea",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-02--pro--image-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 02 · Pro · Image To Video",
+      "endpoint": "/minimax/hailuo-02/pro/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_url",
+          "label": "First frame image",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "end_image_url",
+          "label": "Last frame image",
+          "type": "image",
+          "required": false,
+          "wrap": "bare"
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-02--pro--text-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 02 · Pro · Text To Video",
+      "endpoint": "/minimax/hailuo-02/pro/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-02--standard--image-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 02 · Standard · Image To Video",
+      "endpoint": "/minimax/hailuo-02/standard/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "6",
+            "10"
+          ],
+          "default": "6",
+          "coerce": "number"
+        },
+        {
+          "name": "image_url",
+          "label": "First frame image",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "512P",
+            "768P"
+          ],
+          "default": "768P"
+        },
+        {
+          "name": "end_image_url",
+          "label": "Last frame image",
+          "type": "image",
+          "required": false,
+          "wrap": "bare"
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-02--standard--text-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 02 · Standard · Text To Video",
+      "endpoint": "/minimax/hailuo-02/standard/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "6",
+            "10"
+          ],
+          "default": "6",
+          "coerce": "number"
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-2.3-fast--pro--image-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 2.3 Fast · Pro · Image To Video",
+      "endpoint": "/minimax/hailuo-2.3-fast/pro/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-2.3-fast--standard--image-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 2.3 Fast · Standard · Image To Video",
+      "endpoint": "/minimax/hailuo-2.3-fast/standard/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "6",
+            "10"
+          ],
+          "default": "6",
+          "coerce": "number"
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-2.3--pro--image-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 2.3 · Pro · Image To Video",
+      "endpoint": "/minimax/hailuo-2.3/pro/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-2.3--pro--text-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 2.3 · Pro · Text To Video",
+      "endpoint": "/minimax/hailuo-2.3/pro/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-2.3--standard--image-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 2.3 · Standard · Image To Video",
+      "endpoint": "/minimax/hailuo-2.3/standard/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "6",
+            "10"
+          ],
+          "default": "6",
+          "coerce": "number"
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "minimax--hailuo-2.3--standard--text-to-video",
+      "family": "MiniMax Hailuo",
+      "label": "Hailuo 2.3 · Standard · Text To Video",
+      "endpoint": "/minimax/hailuo-2.3/standard/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "6",
+            "10"
+          ],
+          "default": "6",
+          "coerce": "number"
+        },
+        {
+          "name": "prompt_optimizer",
+          "label": "Prompt optimizer",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      ]
+    },
+    {
+      "id": "nano-banana",
+      "family": "Nano Banana",
+      "label": "Nano Banana",
+      "endpoint": "/nano-banana",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "num_images",
+          "label": "Num Images",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 1,
+          "max": 4,
+          "step": 1
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "auto",
+            "1:1",
+            "4:3",
+            "3:4",
+            "3:2",
+            "2:3",
+            "5:4",
+            "4:5",
+            "16:9",
+            "9:16",
+            "21:9"
+          ],
+          "default": "4:3"
+        },
+        {
+          "name": "output_format",
+          "label": "Output Format",
+          "type": "select",
+          "required": false,
+          "options": [
+            "jpeg",
+            "png"
+          ],
+          "default": "jpeg"
+        }
+      ]
+    },
+    {
+      "id": "reve--edit",
+      "family": "Reve",
+      "label": "Edit",
+      "endpoint": "/reve/edit",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "num_images",
+          "label": "Num Images",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 1,
+          "max": 4,
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "reve--fast--edit",
+      "family": "Reve",
+      "label": "Fast · Edit",
+      "endpoint": "/reve/fast/edit",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "num_images",
+          "label": "Num Images",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 1,
+          "max": 4,
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "reve--fast--remix",
+      "family": "Reve",
+      "label": "Fast · Remix",
+      "endpoint": "/reve/fast/remix",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_urls",
+          "label": "Image URLs",
+          "type": "images",
+          "required": true,
+          "wrap": "bare",
+          "max": 4
+        },
+        {
+          "name": "num_images",
+          "label": "Num Images",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 1,
+          "max": 4,
+          "step": 1
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "1:1",
+            "4:3",
+            "3:4",
+            "3:2",
+            "2:3",
+            "5:4",
+            "4:5",
+            "16:9",
+            "9:16"
+          ],
+          "default": "4:3"
+        }
+      ]
+    },
+    {
+      "id": "reve--remix",
+      "family": "Reve",
+      "label": "Remix",
+      "endpoint": "/reve/remix",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "image_urls",
+          "label": "Image URLs",
+          "type": "images",
+          "required": true,
+          "wrap": "bare",
+          "max": 4
+        },
+        {
+          "name": "num_images",
+          "label": "Num Images",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 1,
+          "max": 4,
+          "step": 1
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect Ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "1:1",
+            "4:3",
+            "3:4",
+            "3:2",
+            "2:3",
+            "5:4",
+            "4:5",
+            "16:9",
+            "9:16"
+          ],
+          "default": "4:3"
+        }
+      ]
+    },
+    {
+      "id": "reve--text-to-image",
+      "family": "Reve",
+      "label": "Text To Image",
+      "endpoint": "/reve/text-to-image",
+      "output": "image",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "num_images",
+          "label": "Num Images",
+          "type": "number",
+          "required": false,
+          "default": 1,
+          "min": 1,
+          "max": 4,
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "sora-2--image-to-video",
+      "family": "OpenAI Sora 2",
+      "label": "Image To Video",
+      "endpoint": "/sora-2/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "8",
+            "12"
+          ],
+          "default": "4",
+          "coerce": "number"
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": false,
+          "wrap": "bare"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720p"
+          ],
+          "default": "720p"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        }
+      ]
+    },
+    {
+      "id": "sora-2--image-to-video--pro",
+      "family": "OpenAI Sora 2",
+      "label": "Image To Video · Pro",
+      "endpoint": "/sora-2/image-to-video/pro",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "8",
+            "12"
+          ],
+          "default": "4",
+          "coerce": "number"
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720p",
+            "1080p"
+          ],
+          "default": "720p"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        }
+      ]
+    },
+    {
+      "id": "sora-2--text-to-video",
+      "family": "OpenAI Sora 2",
+      "label": "Text To Video",
+      "endpoint": "/sora-2/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "8",
+            "12"
+          ],
+          "default": "4",
+          "coerce": "number"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720p"
+          ],
+          "default": "720p"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        }
+      ]
+    },
+    {
+      "id": "sora-2--text-to-video--pro",
+      "family": "OpenAI Sora 2",
+      "label": "Text To Video · Pro",
+      "endpoint": "/sora-2/text-to-video/pro",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "4",
+            "8",
+            "12"
+          ],
+          "default": "4",
+          "coerce": "number"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "720p",
+            "1080p"
+          ],
+          "default": "720p"
+        },
+        {
+          "name": "aspect_ratio",
+          "label": "Aspect ratio",
+          "type": "select",
+          "required": false,
+          "options": [
+            "16:9",
+            "9:16"
+          ],
+          "default": "16:9"
+        }
+      ]
+    },
+    {
+      "id": "wan-25-preview--image-to-video",
+      "family": "Wan 2.5",
+      "label": "Image To Video",
+      "endpoint": "/wan-25-preview/image-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "seed",
+          "label": "Seed",
+          "type": "number",
+          "required": false,
+          "default": -1,
+          "min": -1,
+          "max": 1000000,
+          "step": 1
+        },
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "5",
+            "10"
+          ],
+          "default": "5",
+          "coerce": "number"
+        },
+        {
+          "name": "audio_url",
+          "label": "Audio URL",
+          "type": "audio",
+          "required": false,
+          "wrap": "bare"
+        },
+        {
+          "name": "image_url",
+          "label": "Image URL",
+          "type": "image",
+          "required": true,
+          "wrap": "bare"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "480p",
+            "720p",
+            "1080p"
+          ],
+          "default": "720p"
+        },
+        {
+          "name": "negative_prompt",
+          "label": "Negative prompt",
+          "type": "textarea",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "wan-25-preview--text-to-video",
+      "family": "Wan 2.5",
+      "label": "Text To Video",
+      "endpoint": "/wan-25-preview/text-to-video",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "seed",
+          "label": "Seed",
+          "type": "number",
+          "required": false,
+          "default": -1,
+          "min": -1,
+          "max": 1000000,
+          "step": 1
+        },
+        {
+          "name": "prompt",
+          "label": "Prompt",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "name": "duration",
+          "label": "Duration",
+          "type": "select",
+          "required": false,
+          "options": [
+            "5",
+            "10"
+          ],
+          "default": "5",
+          "coerce": "number"
+        },
+        {
+          "name": "audio_url",
+          "label": "Audio URL",
+          "type": "audio",
+          "required": false,
+          "wrap": "bare"
+        },
+        {
+          "name": "resolution",
+          "label": "Resolution",
+          "type": "select",
+          "required": false,
+          "options": [
+            "480p",
+            "720p",
+            "1080p"
+          ],
+          "default": "720p"
+        },
+        {
+          "name": "negative_prompt",
+          "label": "Negative prompt",
+          "type": "textarea",
+          "required": false,
+          "default": ""
+        }
+      ]
+    },
+    {
+      "id": "v1--speak--higgsfield",
+      "family": "Higgsfield",
+      "label": "Speak · Talking Avatar (v1)",
+      "endpoint": "/v1/speak/higgsfield",
+      "output": "video",
+      "verified": true,
+      "fields": [
+        {
+          "name": "prompt",
+          "label": "Direction Prompt",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "name": "input_image",
+          "label": "Portrait Image",
+          "type": "image",
+          "required": true,
+          "wrap": "ref"
+        },
+        {
+          "name": "input_audio",
+          "label": "Audio Track (WAV)",
+          "type": "audio",
+          "required": true,
+          "wrap": "ref"
+        },
+        {
+          "name": "quality",
+          "label": "Quality",
+          "type": "select",
+          "options": [
+            "mid",
+            "high"
+          ],
+          "default": "high"
+        },
+        {
+          "name": "duration",
+          "label": "Duration (s)",
+          "type": "select",
+          "options": [
+            "5",
+            "10",
+            "15"
+          ],
+          "default": "5",
+          "coerce": "number"
+        }
+      ]
+    }
+  ]
+}
