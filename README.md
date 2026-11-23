@@ -1,6 +1,6 @@
-# Vyolab Studio
+# EVIE-LABS
 
-Self-hosted AI creative platform for **Vyolab**, forked from [`Mukhsin0508/hixfield`](https://github.com/Mukhsin0508/hixfield) (MIT).
+Self-hosted AI creative platform for **EVIE-LABS**, forked from [`Mukhsin0508/hixfield`](https://github.com/Mukhsin0508/hixfield) (MIT).
 
 Preserves Hixfield's **Night Grading Suite** UI (`DESIGN.md`) and all six original studio workflows while adding a multi-provider model router, Higgsfield open-source agent skills, ComfyUI Colab/cloud GPU workers for Hugging Face models, a Supercomputer-style campaign agent, spend guardrails, and approval-gated Postiz social scheduling.
 

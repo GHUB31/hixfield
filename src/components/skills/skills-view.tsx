@@ -22,7 +22,7 @@ export function SkillsView() {
   const [skills, setSkills] = useState<SkillSummary[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>(["higgsfield-generate"]);
   const [rawPrompt, setRawPrompt] = useState(
-    "Matte black Vyolab headphone set resting on brushed basalt stone with subtle mist"
+    "Matte black EVIE-LABS studio speaker resting on brushed basalt stone with subtle mist"
   );
   const [enhanced, setEnhanced] = useState<{
     enhancedPrompt: string;
@@ -61,29 +61,32 @@ export function SkillsView() {
 
   return (
     <div className="animate-rise">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Higgsfield Agent Skills</h1>
-        <p className="mt-1.5 text-sm text-ink-300">
-          Open-source MIT playbooks synced from{" "}
-          <a
-            href="https://github.com/higgsfield-ai/skills"
-            target="_blank"
-            rel="noreferrer"
-            className="text-lime-400 underline decoration-lime-400/40 underline-offset-2"
-          >
-            higgsfield-ai/skills
-          </a>{" "}
-          ({skills.length} loaded). Select skills to direct prompts or let the Supercomputer Agent
-          auto-match them.
-        </p>
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-[22px] font-bold tracking-[-0.025em] text-white">
+            Higgsfield Agent Skills
+          </h1>
+          <p className="mt-1 text-[13px] text-white/55">
+            {skills.length} open-source MIT creative playbooks synced from{" "}
+            <a
+              href="https://github.com/higgsfield-ai/skills"
+              target="_blank"
+              rel="noreferrer"
+              className="text-white underline decoration-white/30 underline-offset-2 hover:text-[#d1fe17]"
+            >
+              higgsfield-ai/skills
+            </a>
+            .
+          </p>
+        </div>
       </header>
 
-      {/* Live prompt enhancer */}
-      <section className="animate-rise rise-1 mt-6 rounded-xl border border-ink-700 bg-ink-900 p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-ink-50">Skill-Guided Prompt Director</h2>
-          <span className="font-mono text-xs text-ink-400">
-            {selectedIds.length} skill{selectedIds.length === 1 ? "" : "s"} active
+      {/* Live prompt director */}
+      <section className="mt-5 rounded-2xl border border-white/[0.08] bg-[#0b0b0c] p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[14px] font-semibold text-white">Skill-Guided Prompt Director</h2>
+          <span className="font-mono text-[11px] text-white/45">
+            {selectedIds.length} active
           </span>
         </div>
         <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -105,18 +108,18 @@ export function SkillsView() {
               Apply Selected Skills
             </Button>
           </div>
-          <div className="rounded-lg border border-ink-700 bg-ink-950 p-4">
-            <p className="font-mono text-[11px] uppercase text-ink-400">Directed Prompt Output</p>
+          <div className="rounded-xl border border-white/[0.07] bg-white/[0.03] p-4">
+            <p className="text-[11px] font-medium text-white/40">Directed Prompt Output</p>
             {enhanced ? (
               <>
-                <p className="mt-2 text-sm leading-relaxed text-ink-100">
+                <p className="mt-2 text-[13px] leading-relaxed text-white">
                   {enhanced.enhancedPrompt}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {enhanced.appliedSkills.map((s) => (
                     <span
                       key={s}
-                      className="rounded-md border border-lime-400/30 bg-lime-400/10 px-2 py-0.5 font-mono text-[11px] text-lime-400"
+                      className="rounded-md bg-white/[0.08] px-2 py-0.5 text-[11px] font-medium text-white/80"
                     >
                       {s}
                     </span>
@@ -124,17 +127,16 @@ export function SkillsView() {
                 </div>
               </>
             ) : (
-              <p className="mt-2 text-sm text-ink-400">
-                Select one or more skill cards below and run the director to inspect the enriched
-                prompt.
+              <p className="mt-2 text-[13px] text-white/45">
+                Select one or more skills below and run the director to inspect the enriched prompt.
               </p>
             )}
           </div>
         </div>
       </section>
 
-      {/* Skill catalog grid */}
-      <section className="animate-rise rise-2 mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* Skill cards */}
+      <section className="mt-5 grid grid-cols-1 gap-3.5 md:grid-cols-2 lg:grid-cols-3">
         {skills.map((skill) => {
           const active = selectedIds.includes(skill.id);
           return (
@@ -142,18 +144,20 @@ export function SkillsView() {
               key={skill.id}
               type="button"
               onClick={() => toggleSkill(skill.id)}
-              className={`flex flex-col rounded-xl border p-5 text-left transition-colors ${
+              className={`flex flex-col rounded-2xl border p-5 text-left transition-all cursor-pointer ${
                 active
-                  ? "border-lime-400 bg-ink-900 ring-1 ring-lime-400"
-                  : "border-ink-700 bg-ink-900 hover:border-ink-600"
+                  ? "border-[#d1fe17] bg-[#0f0f10] ring-1 ring-[#d1fe17]"
+                  : "border-white/[0.08] bg-[#0b0b0c] hover:border-white/[0.18]"
               }`}
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="font-mono text-xs text-lime-400">{skill.category}</span>
-                <span className="font-mono text-[11px] text-ink-400">v{skill.version}</span>
+                <span className="rounded-md bg-white/[0.07] px-2 py-0.5 text-[10px] font-semibold text-white/75 uppercase">
+                  {skill.category}
+                </span>
+                <span className="font-mono text-[11px] text-white/40">v{skill.version}</span>
               </div>
-              <h3 className="mt-2 text-base font-semibold text-ink-50">{skill.id}</h3>
-              <p className="mt-1.5 line-clamp-3 text-xs leading-relaxed text-ink-300">
+              <h3 className="mt-3 text-[15px] font-bold text-white">{skill.id}</h3>
+              <p className="mt-1.5 line-clamp-3 text-[12px] leading-relaxed text-white/55">
                 {skill.description}
               </p>
               {skill.recommendedModels.length > 0 && (
@@ -161,7 +165,7 @@ export function SkillsView() {
                   {skill.recommendedModels.map((m) => (
                     <span
                       key={m}
-                      className="rounded border border-ink-700 bg-ink-850 px-1.5 py-0.5 font-mono text-[10px] text-ink-300"
+                      className="rounded bg-white/[0.05] px-1.5 py-0.5 font-mono text-[10px] text-white/55"
                     >
                       {m}
                     </span>

@@ -1,64 +1,76 @@
+import type {
+  InputHTMLAttributes,
+  ReactNode,
+  SelectHTMLAttributes,
+  TextareaHTMLAttributes,
+} from "react";
 import { cn } from "@/lib/utils";
+
+const CONTROL =
+  "w-full rounded-xl border border-white/[0.1] bg-white/[0.04] text-[13px] text-white placeholder:text-white/35 " +
+  "transition-colors focus:border-white/30 focus:bg-white/[0.06] focus:outline-none " +
+  "disabled:opacity-45 disabled:cursor-not-allowed";
 
 export function Field({
   label,
   htmlFor,
   help,
   error,
-  className,
   children,
+  className,
 }: {
   label: string;
   htmlFor?: string;
   help?: string;
   error?: string | null;
+  children: ReactNode;
   className?: string;
-  children: React.ReactNode;
 }) {
   return (
-    <div className={cn("flex flex-col", className)}>
-      <label htmlFor={htmlFor} className="mb-1.5 text-[13px] font-medium text-ink-300">
+    <div className={cn("flex flex-col gap-1.5", className)}>
+      <label htmlFor={htmlFor} className="text-[12px] font-medium text-white/70">
         {label}
       </label>
       {children}
       {error ? (
-        <p className="mt-1.5 text-[13px] text-danger">{error}</p>
+        <p className="text-[12px] text-danger">{error}</p>
       ) : help ? (
-        <p className="mt-1.5 text-[13px] text-ink-400">{help}</p>
+        <p className="text-[12px] text-white/45">{help}</p>
       ) : null}
     </div>
   );
 }
 
-const CONTROL =
-  "w-full rounded-lg bg-ink-900 border border-ink-700 px-3.5 text-sm text-ink-50 placeholder:text-ink-400 transition-colors hover:border-ink-600 focus:border-lime-400/70 focus:outline-none disabled:opacity-50";
-
-export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  const { className, ...rest } = props;
-  return <input className={cn(CONTROL, "h-10", className)} {...rest} />;
+export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input className={cn(CONTROL, "h-10 px-3.5", className)} {...props} />;
 }
 
-export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  const { className, ...rest } = props;
-  return <textarea className={cn(CONTROL, "py-2.5 min-h-24 resize-y", className)} {...rest} />;
+export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea className={cn(CONTROL, "min-h-24 px-3.5 py-2.5 leading-relaxed", className)} {...props} />;
 }
 
-export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  const { className, children, ...rest } = props;
+export function Select({ className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <div className="relative">
-      <select className={cn(CONTROL, "h-10 appearance-none pr-9", className)} {...rest}>
+      <select
+        className={cn(
+          CONTROL,
+          "h-10 appearance-none bg-[#121214] pl-3.5 pr-9 cursor-pointer",
+          className
+        )}
+        {...props}
+      >
         {children}
       </select>
       <svg
-        className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-ink-400"
-        viewBox="0 0 24 24"
+        viewBox="0 0 16 16"
+        className="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-white/50"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.8"
         aria-hidden
       >
-        <path d="m6 9 6 6 6-9" strokeLinecap="round" strokeLinejoin="round" transform="scale(1,0.9) translate(0,1)" />
+        <path d="m4 6 4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   );

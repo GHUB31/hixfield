@@ -1,42 +1,43 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Spline_Sans_Mono } from "next/font/google";
+import { Inter, Space_Mono } from "next/font/google";
 import "./globals.css";
 
-const archivo = Archivo({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-archivo",
-  axes: ["wdth"],
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const splineMono = Spline_Sans_Mono({
+const spaceMono = Space_Mono({
   subsets: ["latin"],
-  variable: "--font-spline-mono",
+  variable: "--font-space-mono",
+  weight: ["400", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Vyolab Studio — Self-Hosted AI Creative Platform",
-    template: "%s · Vyolab Studio",
+    default: "EVIE-LABS — Self-Hosted AI Creative Studio",
+    template: "%s · EVIE-LABS",
   },
   description:
-    "Self-hosted AI creative platform for Vyolab (forked from Hixfield): Higgsfield official API & open-source skills, ComfyUI Colab/cloud GPU routing, Supercomputer campaign agent, spend guardrails, and Postiz approval publishing.",
+    "Self-hosted AI creative platform for EVIE-LABS: Higgsfield official API & open-source skills, ComfyUI Colab/cloud GPU routing, Supercomputer campaign agent, spend guardrails, and Postiz approval publishing.",
   openGraph: {
-    title: "Vyolab Studio — Self-Hosted AI Creative Platform",
+    title: "EVIE-LABS — Self-Hosted AI Creative Studio",
     description:
-      "Camera-controlled AI video, multi-provider GPU/API routing, Supercomputer campaign orchestration, and human-approved Postiz publishing.",
+      "Cinema-grade AI video, Soul image aesthetics, multi-provider GPU/API routing, Supercomputer agent orchestration, and approval-gated social scheduling.",
     images: ["/media/hero-soundstage.webp"],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#09090b",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${splineMono.variable}`}>
+    <html lang="en" className={`${inter.variable} ${spaceMono.variable}`}>
       <body>{children}</body>
     </html>
   );

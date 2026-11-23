@@ -4,10 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Check, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * The signature Higgsfield cinema tile: crisp poster frame immediately visible,
- * seamless looping video playback on hover/focus, lime selection ring + mono tag.
- */
 export function PresetCard({
   name,
   description,
@@ -92,16 +88,15 @@ export function PresetCard({
       disabled={disabled}
       aria-pressed={selected}
       className={cn(
-        "group relative block w-full overflow-hidden rounded-xl border bg-ink-900 text-left transition-all duration-300",
+        "group relative block w-full overflow-hidden rounded-2xl border bg-[#0b0b0c] text-left transition-all duration-300 cursor-pointer",
         selected
-          ? "border-lime-400 ring-1 ring-lime-400"
-          : "border-ink-800 hover:border-ink-600",
+          ? "border-[#d1fe17] ring-1 ring-[#d1fe17]"
+          : "border-white/[0.07] hover:border-white/[0.18]",
         disabled && "opacity-40 pointer-events-none",
         className
       )}
     >
-      <div className={cn("relative w-full overflow-hidden bg-ink-900", aspect)}>
-        {/* Crisp immediate poster image */}
+      <div className={cn("relative w-full overflow-hidden bg-[#0b0b0c]", aspect)}>
         {posterUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -112,7 +107,6 @@ export function PresetCard({
           />
         )}
 
-        {/* Looping preview video plays seamlessly on hover */}
         {previewUrl && inView && (
           <video
             ref={videoRef}
@@ -129,32 +123,29 @@ export function PresetCard({
           />
         )}
 
-        {/* Category pill */}
         {category && (
-          <span className="absolute left-2.5 top-2.5 rounded-full border border-ink-50/10 bg-ink-950/70 px-2 py-0.5 font-mono text-[10px] tracking-wide text-ink-200 backdrop-blur-md">
+          <span className="absolute left-2.5 top-2.5 rounded-md bg-black/65 px-2 py-0.5 text-[10px] font-medium text-white/80 backdrop-blur-md">
             {category}
           </span>
         )}
 
-        {/* Subtle play glyph on hover when unselected */}
         {!selected && previewUrl && (
-          <span className="absolute right-2.5 top-2.5 grid size-6 place-items-center rounded-full bg-ink-950/65 text-ink-200 opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100">
+          <span className="absolute right-2.5 top-2.5 grid size-6 place-items-center rounded-full bg-black/65 text-white opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100">
             <Play className="size-3 fill-current" aria-hidden />
           </span>
         )}
 
-        {/* Lime selection badge */}
         {selected && (
-          <span className="absolute right-2.5 top-2.5 grid size-6 place-items-center rounded-md bg-lime-400 font-mono text-xs font-bold text-ink-950 shadow-[0_2px_10px_rgba(204,255,0,0.35)]">
+          <span className="absolute right-2.5 top-2.5 grid size-6 place-items-center rounded-md bg-[#d1fe17] text-[11px] font-extrabold text-black shadow-sm">
             {selectionTag ?? <Check className="size-3.5" aria-hidden />}
           </span>
         )}
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-950 via-ink-950/75 to-transparent px-3.5 pb-3 pt-10">
-        <p className="truncate text-sm font-semibold tracking-tight text-ink-50">{name}</p>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/55 to-transparent px-3.5 pb-3 pt-10">
+        <p className="truncate text-[13px] font-semibold text-white">{name}</p>
         {description && (
-          <p className="mt-0.5 truncate text-[12px] text-ink-300">{description}</p>
+          <p className="mt-0.5 truncate text-[11px] text-white/60">{description}</p>
         )}
       </div>
     </button>

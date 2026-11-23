@@ -1,237 +1,187 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { StudioNav } from "@/components/studio-nav";
 import { HeroVideo } from "@/components/landing/hero-video";
-import { CopyCommand } from "@/components/landing/copy-command";
-import { GitHubStars } from "@/components/landing/github-stars";
 import { LoopTile } from "@/components/landing/loop-tile";
+import { ExploreHeroPrompt } from "@/components/explore/explore-hero-prompt";
 
-const REPO = process.env.NEXT_PUBLIC_GITHUB_REPO ?? "GHUB31/hixfield";
+const FEATURED_DROPS = [
+  {
+    href: "/campaigns",
+    badge: "NEW",
+    title: "SUPERCOMPUTER AGENT",
+    subtitle: "Turn one brand brief into scripts, storyboards, videos, captions, and approval-gated posts",
+    img: "/media/hall-wide.webp",
+  },
+  {
+    href: "/routing",
+    badge: "NEW",
+    title: "CLOUD GPU & API ROUTER",
+    subtitle: "Route between Colab ComfyUI (Wan 2.2 / FLUX), Hugging Face, and Higgsfield API with spend caps",
+    img: "/media/lens-macro.webp",
+  },
+  {
+    href: "/publish",
+    badge: null,
+    title: "POSTIZ APPROVAL STUDIO",
+    subtitle: "Human review gate before scheduling to TikTok, Instagram, YouTube Shorts, and X",
+    img: "/media/gallery-neon.webp",
+  },
+];
 
-export default function LandingPage() {
+const EXPLORE_GALLERY = [
+  { src: "/media/gallery-y2k.webp", label: "Y2K Digicam", href: "/create/image" },
+  { src: "/media/gallery-luxury.webp", label: "Quiet Luxury", href: "/create/image" },
+  { src: "/media/gallery-party.webp", label: "Party Flash", href: "/create/image" },
+  { src: "/media/gallery-cctv.webp", label: "CCTV Monochrome", href: "/create/image" },
+];
+
+export default function HomePage() {
   return (
-    <div className="min-h-dvh bg-ink-950">
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="relative flex min-h-[94svh] flex-col overflow-hidden">
-        <HeroVideo />
+    <div className="min-h-dvh bg-black text-white">
+      <StudioNav />
 
-        <header className="relative z-10 flex items-center justify-between px-5 py-5 sm:px-10">
-          <div className="flex items-baseline gap-2.5">
-            <span
-              className="text-base font-bold tracking-wide text-ink-50"
-              style={{ fontStretch: "125%" }}
-            >
-              VYOLAB<span className="text-lime-400">.</span>
-            </span>
-            <span className="font-mono text-[11px] text-ink-400">Hixfield core</span>
+      <main className="mx-auto max-w-[1440px] px-4 pb-24 pt-4 sm:px-6 lg:px-8">
+        {/* ── Higgsfield-style Full-Bleed Rounded Cinema Hero Stage ─────────── */}
+        <section className="relative flex min-h-[540px] flex-col items-center justify-center overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0b0b0c] px-5 py-14 text-center sm:min-h-[600px] sm:px-10">
+          <HeroVideo />
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/85"
+            aria-hidden
+          />
+
+          <div className="relative z-10 flex w-full max-w-3xl flex-col items-center">
+            <h1 className="text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold leading-[0.98] tracking-[-0.035em] text-white uppercase">
+              EVIE-LABS STUDIO.
+              <br />
+              CINEMA-GRADE AI
+            </h1>
+            <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/75 sm:text-[16px]">
+              Camera-controlled video, Soul image aesthetics, open-source Higgsfield skills,
+              ComfyUI cloud GPUs, and Supercomputer campaign orchestration in one self-hosted
+              workspace.
+            </p>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href="/create/video"
+                className="inline-flex h-11 items-center justify-center rounded-full bg-white px-7 text-[14px] font-semibold text-black transition-colors hover:bg-white/90"
+              >
+                Create Your Video
+              </Link>
+              <Link
+                href="/campaigns"
+                className="inline-flex h-11 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] px-6 text-[14px] font-medium text-white backdrop-blur-md transition-colors hover:bg-white/[0.14]"
+              >
+                Open Supercomputer
+              </Link>
+            </div>
+
+            <ExploreHeroPrompt />
           </div>
-          <nav className="flex items-center gap-1 text-sm">
-            <Link
-              href="/campaigns"
-              className="rounded-lg px-3.5 py-2 text-ink-100 transition-colors hover:bg-ink-800/70 hover:text-ink-50"
-            >
-              Supercomputer Agent
+        </section>
+
+        {/* ── Featured Drops (Matches real higgsfield.ai Home 3-card row) ───── */}
+        <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+          {FEATURED_DROPS.map((item) => (
+            <Link key={item.title} href={item.href} className="group block">
+              <div className="relative aspect-[16/9] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0b0b0c]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                {item.badge && (
+                  <span className="absolute right-3 top-3 rounded-md bg-[#d1fe17] px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-black uppercase">
+                    {item.badge}
+                  </span>
+                )}
+              </div>
+              <div className="mt-2.5 px-0.5">
+                <h2 className="text-[13px] font-bold tracking-[0.01em] text-white uppercase group-hover:text-[#d1fe17] transition-colors">
+                  {item.title}
+                </h2>
+                <p className="mt-0.5 text-[12px] leading-snug text-white/50">{item.subtitle}</p>
+              </div>
             </Link>
+          ))}
+        </section>
+
+        {/* ── Camera Motion Loops Row ───────────────────────────────────────── */}
+        <section className="mt-12">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[18px] font-bold tracking-[-0.02em] text-white">
+              Camera Motion Presets
+            </h2>
             <Link
               href="/create/video"
-              className="rounded-lg px-3.5 py-2 text-ink-100 transition-colors hover:bg-ink-800/70 hover:text-ink-50"
+              className="text-[13px] font-medium text-white/55 transition-colors hover:text-white"
             >
-              Open studio
-            </Link>
-            <a
-              href={`https://github.com/${REPO}`}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-lg px-3.5 py-2 text-ink-100 transition-colors hover:bg-ink-800/70 hover:text-ink-50"
-            >
-              GitHub
-            </a>
-          </nav>
-        </header>
-
-        <div className="relative z-10 mt-auto max-w-4xl animate-rise px-5 pb-16 sm:px-10 sm:pb-20">
-          <h1
-            className="text-[clamp(3.5rem,11vw,8.5rem)] font-bold leading-[0.92] tracking-tight text-ink-50"
-            style={{ fontStretch: "125%" }}
-          >
-            VYOLAB
-          </h1>
-          <p className="rise-1 mt-5 max-w-2xl animate-rise text-lg leading-relaxed text-ink-100 sm:text-xl">
-            Self-hosted AI creative platform forked from Hixfield. Camera-controlled video,
-            Higgsfield official API &amp; open-source skills, ComfyUI Colab/cloud GPUs, a
-            Supercomputer campaign agent, spend caps, and human-approved Postiz scheduling.
-          </p>
-          <div className="rise-2 mt-8 flex flex-wrap items-center gap-3 animate-rise">
-            <CopyCommand
-              command={`git clone https://github.com/${REPO}.git`}
-              display={`git clone …/${REPO.split("/")[1] ?? "hixfield"}.git`}
-            />
-            <GitHubStars />
-            <Link
-              href="/campaigns"
-              className="inline-flex h-12 items-center gap-2 rounded-lg bg-lime-400 px-5 text-[15px] font-semibold text-ink-950 transition-colors hover:bg-lime-300"
-            >
-              Launch studio
-              <ArrowRight className="size-4" aria-hidden />
+              Open Video Studio →
             </Link>
           </div>
-          <p className="rise-3 mt-6 animate-rise font-mono text-xs tracking-wide text-ink-300">
-            server-side keys · GPU/API model router · spend ledger · Postiz approval gate
-          </p>
-        </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <LoopTile
+              src="/media/hero-loop.mp4"
+              poster="/media/hero-soundstage.webp"
+              label="DOLLY IN"
+              sublabel="soundstage · motivated key light"
+            />
+            <LoopTile
+              src="/media/hall-loop.mp4"
+              poster="/media/hall-wide.webp"
+              label="ARCHITECTURAL PUSH"
+              sublabel="brutalist hall · floor haze"
+            />
+            <LoopTile
+              src="/media/neon-loop.mp4"
+              poster="/media/gallery-neon.webp"
+              label="HANDHELD PARALLAX"
+              sublabel="9:16 · nocturnal street"
+              aspect="aspect-video sm:aspect-auto sm:h-full"
+            />
+          </div>
+        </section>
 
-        <p className="absolute bottom-4 right-5 z-10 hidden font-mono text-[11px] text-ink-400 sm:block">
-          background: Soul still + camera move · Hixfield Night Grading Suite
-        </p>
-      </section>
-
-      {/* ── The mechanism ────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-5 py-20 sm:px-10 sm:py-28">
-        <h2 className="max-w-2xl text-3xl font-semibold tracking-tight text-ink-50 sm:text-4xl">
-          Pick a camera move. Route to GPU or API. Ship with approval.
-        </h2>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-300">
-          Every Hixfield studio surface stays intact — DoP camera presets, Soul styles, Characters,
-          Speak, Library, and 49 Playground models — now backed by Vyolab&apos;s model router,
-          ComfyUI Hugging Face workers, open-source Higgsfield skills, and Postiz publishing review.
-        </p>
-
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <LoopTile
-            src="/media/hero-loop.mp4"
-            poster="/media/hero-soundstage.webp"
-            label="DOLLY IN"
-            sublabel="soundstage, single lime source"
-          />
-          <LoopTile
-            src="/media/hall-loop.mp4"
-            poster="/media/hall-wide.webp"
-            label="PUSH IN"
-            sublabel="brutalist hall, floor fog"
-          />
-          <LoopTile
-            src="/media/neon-loop.mp4"
-            poster="/media/gallery-neon.webp"
-            label="PARALLAX"
-            sublabel="9:16, handheld drift"
-            aspect="aspect-video sm:aspect-auto sm:h-full"
-          />
-        </div>
-      </section>
-
-      {/* ── Platform Architecture ────────────────────────────────────── */}
-      <section className="border-t border-ink-800 bg-ink-900/40">
-        <div className="mx-auto max-w-6xl px-5 py-20 sm:px-10 sm:py-28">
-          <h2 className="max-w-2xl text-3xl font-semibold tracking-tight text-ink-50 sm:text-4xl">
-            Brief to approved schedule in one self-hosted stack.
-          </h2>
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {[
-              {
-                img: "/media/gallery-y2k.webp",
-                title: "Supercomputer Agent",
-                href: "/campaigns",
-                body: "Probes Higgsfield's official Supercomputer Agent API first; falls back seamlessly to Vyolab's multi-stage orchestrator for scripts, storyboards, images, videos, and captions.",
-              },
-              {
-                img: "/media/gallery-neon.webp",
-                title: "Model Router & Spend Guardrails",
-                href: "/routing",
-                body: "Selects between Colab/cloud ComfyUI GPUs, Hugging Face Router, and Higgsfield API by quality, availability, and USD cost with hard daily & monthly caps.",
-              },
-              {
-                img: "/media/lens-macro.webp",
-                title: "Higgsfield Open-Source Skills",
-                href: "/skills",
-                body: "Nine vendored MIT skills from higgsfield-ai/skills power prompt direction, product photoshoots, faceless video hooks, and consistent brandkits.",
-              },
-              {
-                img: "/media/hall-wide.webp",
-                title: "Postiz Publishing Approval Gate",
-                href: "/publish",
-                body: "Every generated social post lands in pending_approval. Nothing reaches Postiz until a human approves the caption, asset, channel, and time slot.",
-              },
-            ].map(({ img, title, body, href }) => (
+        {/* ── Explore Aesthetics Grid ───────────────────────────────────────── */}
+        <section className="mt-12">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[18px] font-bold tracking-[-0.02em] text-white">
+              Soul Aesthetics
+            </h2>
+            <Link
+              href="/create/image"
+              className="text-[13px] font-medium text-white/55 transition-colors hover:text-white"
+            >
+              Open Image Studio →
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-4">
+            {EXPLORE_GALLERY.map((item) => (
               <Link
-                key={title}
-                href={href}
-                className="group relative block min-h-64 overflow-hidden rounded-xl border border-ink-700 transition-colors hover:border-ink-600"
+                key={item.label}
+                href={item.href}
+                className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0b0b0c]"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={img}
-                  alt=""
+                  src={item.src}
+                  alt={item.label}
                   loading="lazy"
-                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 />
-                <div
-                  className="absolute inset-0 bg-gradient-to-t from-ink-950/95 via-ink-950/65 to-ink-950/25"
-                  aria-hidden
-                />
-                <div className="relative flex h-full min-h-64 flex-col justify-end p-5">
-                  <h3 className="text-lg font-semibold text-ink-50 group-hover:text-lime-400">
-                    {title}
-                  </h3>
-                  <p className="mt-1.5 max-w-md text-[15px] leading-relaxed text-ink-100">{body}</p>
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3.5 pt-12">
+                  <span className="text-[13px] font-semibold text-white">{item.label}</span>
+                  <span className="rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100">
+                    Use Style
+                  </span>
                 </div>
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ── Run it (the lime block) ──────────────────────────────────── */}
-      <section className="bg-lime-400 text-ink-950">
-        <div className="mx-auto max-w-6xl px-5 py-20 sm:px-10 sm:py-24">
-          <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
-            <div>
-              <h2
-                className="text-4xl font-bold tracking-tight sm:text-5xl"
-                style={{ fontStretch: "115%" }}
-              >
-                Self-host tonight.
-              </h2>
-              <p className="mt-4 max-w-md text-base leading-relaxed text-ink-950/80">
-                One Docker Compose stack for Vyolab Studio, optional Postiz scheduling profile, and
-                a Colab GPU ComfyUI notebook for zero-API-cost Hugging Face inference.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/create/video"
-                  className="inline-flex h-12 items-center gap-2 rounded-lg bg-ink-950 px-6 text-[15px] font-semibold text-lime-400 transition-colors hover:bg-ink-800"
-                >
-                  Open Vyolab Studio
-                  <ArrowRight className="size-4" aria-hidden />
-                </Link>
-              </div>
-            </div>
-            <pre className="overflow-x-auto rounded-xl bg-ink-950 p-6 font-mono text-[13px] leading-loose text-ink-100 shadow-[0_16px_48px_rgba(9,9,11,0.35)]">
-              <code>{`cp .env.example .env
-docker compose up --build
-
-# with self-hosted Postiz scheduler
-docker compose --profile postiz up --build
-
-# run automated test suite
-npm test`}</code>
-            </pre>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Footer ───────────────────────────────────────────────────── */}
-      <footer className="border-t border-ink-800">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-10 sm:px-10">
-          <span
-            className="text-sm font-bold tracking-wide text-ink-50"
-            style={{ fontStretch: "125%" }}
-          >
-            VYOLAB<span className="text-lime-400">.</span>
-          </span>
-          <p className="font-mono text-xs text-ink-400">
-            Forked from Mukhsin0508/hixfield (MIT) · Skills from higgsfield-ai/skills (MIT)
-          </p>
-        </div>
-      </footer>
+        </section>
+      </main>
     </div>
   );
 }

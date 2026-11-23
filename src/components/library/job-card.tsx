@@ -20,7 +20,7 @@ export const KIND_LABEL: Record<JobKind, string> = {
   soul: "Image",
   character: "Character",
   speak: "Speak",
-  model: "Playground",
+  model: "Model",
 };
 
 const KIND_ICON: Record<JobKind, LucideIcon> = {
@@ -31,11 +31,6 @@ const KIND_ICON: Record<JobKind, LucideIcon> = {
   model: FlaskConical,
 };
 
-/**
- * One job in the library grid. Videos paint their real first frame immediately
- * (`#t=0.1` + preload="auto") and play smoothly on hover; images & videos offer
- * one-click Animate (I2V) and Queue to Postiz actions.
- */
 export function JobCard({
   job,
   onOpen,
@@ -73,16 +68,16 @@ export function JobCard({
     <div
       onMouseEnter={play}
       onMouseLeave={stop}
-      className="group flex w-full flex-col overflow-hidden rounded-xl border border-ink-800 bg-ink-900 text-left transition-colors hover:border-ink-600"
+      className="group flex w-full flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0b0b0c] text-left transition-colors hover:border-white/[0.18]"
     >
       <button
         type="button"
         onClick={onOpen}
         aria-label={`Open ${KIND_LABEL[job.kind]} job details`}
-        className="relative aspect-video w-full overflow-hidden bg-ink-950 text-left"
+        className="relative aspect-video w-full overflow-hidden bg-black text-left cursor-pointer"
       >
         {!first && (
-          <div className="absolute inset-0 grid place-items-center text-ink-600">
+          <div className="absolute inset-0 grid place-items-center text-white/25">
             <Icon className="size-7" aria-hidden />
           </div>
         )}
@@ -108,7 +103,7 @@ export function JobCard({
         )}
 
         {job.provider && (
-          <span className="absolute left-2.5 top-2.5 rounded-full border border-ink-50/10 bg-ink-950/75 px-2 py-0.5 font-mono text-[10px] text-ink-200 backdrop-blur-md">
+          <span className="absolute left-2.5 top-2.5 rounded-md bg-black/70 px-2 py-0.5 text-[10px] font-medium text-white/80 backdrop-blur-md">
             {job.provider}
           </span>
         )}
@@ -116,17 +111,15 @@ export function JobCard({
 
       <div className="flex flex-1 flex-col gap-2 px-3.5 py-3">
         <div className="flex items-center justify-between gap-2">
-          <span className="truncate text-[13px] font-medium text-ink-100">
+          <span className="truncate text-[13px] font-semibold text-white">
             {KIND_LABEL[job.kind]}
           </span>
           <StatusBadge status={job.status} />
         </div>
 
-        {promptText && (
-          <p className="line-clamp-1 text-xs text-ink-400">{promptText}</p>
-        )}
+        {promptText && <p className="line-clamp-1 text-[12px] text-white/50">{promptText}</p>}
 
-        <div className="mt-auto flex items-center justify-between gap-2 pt-1 font-mono text-[11px] text-ink-400">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-1 font-mono text-[11px] text-white/40">
           <span>{timeAgo(job.createdAt)}</span>
           <div className="flex items-center gap-2">
             {job.estimatedCostUsd != null && <span>${job.estimatedCostUsd.toFixed(2)}</span>}
@@ -135,24 +128,24 @@ export function JobCard({
         </div>
 
         {first && job.status === "completed" && (
-          <div className="flex items-center gap-1.5 border-t border-ink-800 pt-2">
+          <div className="flex items-center gap-1.5 border-t border-white/[0.06] pt-2.5">
             {first.type === "image" && (
               <Link
                 href={`/create/video?image=${encodeURIComponent(`/api/assets/${first.path}`)}`}
-                className="inline-flex flex-1 items-center justify-center gap-1 rounded-md border border-lime-400/30 bg-lime-400/10 px-2 py-1 font-mono text-[10px] text-lime-400 transition-colors hover:bg-lime-400/20"
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#d1fe17] px-2.5 py-1.5 text-[11px] font-bold text-black transition-colors hover:bg-[#dcff4a]"
               >
                 <Clapperboard className="size-3" aria-hidden />
-                Animate (I2V)
+                Animate
               </Link>
             )}
             {onQueuePublish && (
               <button
                 type="button"
                 onClick={() => onQueuePublish(job)}
-                className="inline-flex flex-1 items-center justify-center gap-1 rounded-md border border-ink-700 bg-ink-850 px-2 py-1 font-mono text-[10px] text-ink-200 transition-colors hover:border-ink-600 hover:text-ink-50"
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/[0.07] px-2.5 py-1.5 text-[11px] font-medium text-white/85 transition-colors hover:bg-white/[0.12] cursor-pointer"
               >
                 <Send className="size-3" aria-hidden />
-                Queue Postiz
+                Publish
               </button>
             )}
           </div>

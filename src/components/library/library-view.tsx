@@ -94,13 +94,13 @@ export function LibraryView() {
     const first = job.assets[0];
     if (!first) return;
     try {
-      const prompt = typeof job.params.prompt === "string" ? job.params.prompt : "Vyolab render";
+      const prompt = typeof job.params.prompt === "string" ? job.params.prompt : "EVIE-LABS render";
       await postJSON("/api/publish", {
         jobId: job.id,
         campaignId: job.campaignId ?? null,
         platform: first.type === "video" ? "tiktok" : "instagram",
         caption: prompt,
-        hashtags: ["vyolab", "aicreative"],
+        hashtags: ["evielabs", "aicreative"],
         mediaPaths: [first.path],
       });
       setQueuedNotice("Added render to Publish approval queue (pending_approval).");
@@ -143,10 +143,10 @@ export function LibraryView() {
                 aria-pressed={active}
                 onClick={() => setKindFilter(opt.value)}
                 className={cn(
-                  "rounded-full border px-3.5 py-1.5 text-[13px] transition-colors",
+                  "rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-colors cursor-pointer",
                   active
-                    ? "border-lime-400 bg-lime-400/10 font-medium text-lime-400"
-                    : "border-ink-700 text-ink-300 hover:border-ink-600 hover:text-ink-50"
+                    ? "bg-white text-black"
+                    : "bg-white/[0.05] text-white/60 hover:bg-white/[0.1] hover:text-white"
                 )}
               >
                 {opt.label}

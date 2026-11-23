@@ -1,8 +1,8 @@
 {
-  "name": "vyolab-studio",
+  "name": "evie-labs",
   "version": "1.0.0",
   "private": true,
-  "description": "Vyolab self-hosted AI creative platform (forked from Hixfield) — Higgsfield API & Skills, ComfyUI/Hugging Face GPU routing, Supercomputer campaign agent, spend guardrails, and Postiz approval publishing.",
+  "description": "EVIE-LABS self-hosted AI creative platform (forked from Hixfield) — Higgsfield API & Skills, ComfyUI/Hugging Face GPU routing, Supercomputer campaign agent, spend guardrails, and Postiz approval publishing.",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",

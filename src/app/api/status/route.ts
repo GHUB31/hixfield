@@ -18,7 +18,7 @@ export async function GET() {
 
   return NextResponse.json({
     ok: true,
-    platform: "Vyolab Studio",
+    platform: "EVIE-LABS",
     hasKeys: hasKeys(),
     secrets: secretPresenceSummary(),
     providers,

@@ -53,7 +53,7 @@ function buildDeterministicPlan(
   input: CreateCampaignInput,
   skillIds: string[]
 ): PlannedCampaignPayload {
-  const brand = input.brandName.trim() || "Vyolab";
+  const brand = input.brandName.trim() || "EVIE-LABS";
   const brief = input.brief.trim();
   const objective = input.objective?.trim() || "Drive high-intent product discovery and conversion";
   const audience = input.targetAudience?.trim() || "Design-conscious digital consumers";
@@ -111,12 +111,12 @@ function buildDeterministicPlan(
   const nextDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const captions: CampaignCaption[] = platforms.map((platform, idx) => {
     const slot = new Date(nextDay.getTime() + idx * 4 * 60 * 60 * 1000).toISOString();
-    const cleanTag = brand.toLowerCase().replace(/[^a-z0-9]/g, "") || "vyolab";
+    const cleanTag = brand.toLowerCase().replace(/[^a-z0-9]/g, "") || "evielabs";
     return {
       platform,
       headline: `${brand} — ${objective}`,
       caption: `${brand}: ${brief.slice(0, 140)}${brief.length > 140 ? "…" : ""}\n\nCrafted for ${audience}. Watch the full cut and tell us which frame hits hardest.`,
-      hashtags: [cleanTag, "vyolab", "aicreative", "brandfilm", platform.toLowerCase()],
+      hashtags: [cleanTag, "evielabs", "aicreative", "brandfilm", platform.toLowerCase()],
       cta: `Explore ${brand} via the link in bio.`,
       recommendedSlotIso: slot,
     };

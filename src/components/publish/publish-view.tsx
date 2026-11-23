@@ -32,7 +32,6 @@ export function PublishView() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Manual draft composer
   const [platform, setPlatform] = useState("tiktok");
   const [caption, setCaption] = useState("");
   const [scheduledAt, setScheduledAt] = useState("");
@@ -72,12 +71,12 @@ export function PublishView() {
       const res = await postJSON<{ item: PublishQueueRecord }>("/api/publish", {
         platform,
         caption: caption.trim(),
-        hashtags: ["vyolab"],
+        hashtags: ["evielabs"],
         scheduledAt: scheduledAt ? new Date(scheduledAt).toISOString() : null,
       });
       setItems((prev) => [res.item, ...prev]);
       setCaption("");
-      setFeedback("Draft added to pending_approval queue.");
+      setFeedback("Draft added to approval queue.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create draft.");
     } finally {
@@ -91,7 +90,7 @@ export function PublishView() {
     setFeedback(null);
     try {
       const res = await postJSON<{ item: PublishQueueRecord }>(`/api/publish/${id}/approve`, {
-        approvedBy: reviewerName.trim() || "Vyolab Reviewer",
+        approvedBy: reviewerName.trim() || "EVIE-LABS Reviewer",
         ...(integrationId ? { integrationId } : {}),
       });
       setItems((prev) => prev.map((x) => (x.id === id ? res.item : x)));
@@ -109,7 +108,7 @@ export function PublishView() {
     setFeedback(null);
     try {
       const res = await postJSON<{ item: PublishQueueRecord }>(`/api/publish/${id}/reject`, {
-        reason: "Rejected by reviewer in Vyolab Publish queue",
+        reason: "Rejected by reviewer in EVIE-LABS Publish queue",
       });
       setItems((prev) => prev.map((x) => (x.id === id ? res.item : x)));
       setFeedback(`Rejected post ${shortId(id)}.`);
@@ -138,21 +137,20 @@ export function PublishView() {
 
   return (
     <div className="animate-rise">
-      <header className="flex flex-wrap items-start justify-between gap-4">
+      <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Publish &amp; Approval Queue
+          <h1 className="text-[22px] font-bold tracking-[-0.025em] text-white">
+            Publish &amp; Approval
           </h1>
-          <p className="mt-1.5 text-sm text-ink-300">
-            Postiz social scheduling protected by a mandatory server-side human approval gate.
-            Nothing dispatches until approved.
+          <p className="mt-1 text-[13px] text-white/55">
+            Postiz scheduling protected by a mandatory server-side human approval gate.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-ink-700 bg-ink-900 px-3 py-2 font-mono text-xs">
+        <div className="flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-[12px] text-white/75">
           <span
-            className={`size-2 rounded-full ${postiz?.available ? "bg-lime-400" : "bg-amber animate-lamp"}`}
+            className={`size-1.5 rounded-full ${postiz?.available ? "bg-[#d1fe17]" : "bg-amber animate-lamp"}`}
           />
-          <span className="text-ink-300">
+          <span>
             {postiz?.available
               ? `Postiz connected (${postiz.integrationCount} channels)`
               : "Postiz offline / unconfigured"}
@@ -160,38 +158,29 @@ export function PublishView() {
         </div>
       </header>
 
-      {postiz && !postiz.available && (
-        <div className="mt-4 rounded-xl border border-ink-700 bg-ink-900 px-4 py-3 font-mono text-xs text-ink-300">
-          {postiz.detail}
-        </div>
-      )}
-
       {feedback && (
-        <p className="mt-4 font-mono text-xs text-lime-400" role="status">
+        <p className="mt-4 text-[12px] font-medium text-[#d1fe17]" role="status">
           {feedback}
         </p>
       )}
       {error && (
-        <p className="mt-4 font-mono text-xs text-danger" role="alert">
+        <p className="mt-4 text-[12px] font-medium text-danger" role="alert">
           {error}
         </p>
       )}
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
-        {/* Left: Reviewer identity + manual draft */}
-        <div className="animate-rise rise-1 flex flex-col gap-5 lg:col-span-4">
-          <section className="rounded-xl border border-ink-700 bg-ink-900 p-4 sm:p-5">
-            <div className="flex items-center gap-2 text-sm font-semibold text-ink-50">
-              <ShieldCheck className="size-4 text-lime-400" aria-hidden />
+      <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-12 lg:items-start">
+        <div className="flex flex-col gap-4 lg:col-span-4">
+          <section className="rounded-2xl border border-white/[0.08] bg-[#0b0b0c] p-5">
+            <div className="flex items-center gap-2 text-[14px] font-semibold text-white">
+              <ShieldCheck className="size-4 text-[#d1fe17]" aria-hidden />
               Approval Guardrail
             </div>
-            <p className="mt-1.5 text-xs leading-relaxed text-ink-300">
-              Every campaign draft enters <code className="font-mono text-amber">pending_approval</code>.
-              POST <code className="font-mono text-ink-200">/api/publish/:id/dispatch</code> rejects
-              unapproved records with HTTP 403.
+            <p className="mt-1.5 text-[12px] leading-relaxed text-white/55">
+              Unapproved drafts cannot reach Postiz (enforced server-side with HTTP 403).
             </p>
             <div className="mt-4">
-              <Field label="Reviewer name" htmlFor={reviewerId}>
+              <Field label="Reviewer" htmlFor={reviewerId}>
                 <Input
                   id={reviewerId}
                   value={reviewerName}
@@ -203,9 +192,9 @@ export function PublishView() {
 
           <form
             onSubmit={handleCreateDraft}
-            className="flex flex-col gap-4 rounded-xl border border-ink-700 bg-ink-900 p-4 sm:p-5"
+            className="flex flex-col gap-3.5 rounded-2xl border border-white/[0.08] bg-[#0b0b0c] p-5"
           >
-            <h2 className="text-sm font-semibold text-ink-50">Queue manual draft</h2>
+            <h2 className="text-[14px] font-semibold text-white">Queue Manual Draft</h2>
             <Field label="Platform" htmlFor={platId}>
               <Select id={platId} value={platform} onChange={(e) => setPlatform(e.target.value)}>
                 <option value="tiktok">TikTok</option>
@@ -221,10 +210,10 @@ export function PublishView() {
                 rows={3}
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
-                placeholder="Write post copy to send through approval..."
+                placeholder="Write post copy..."
               />
             </Field>
-            <Field label="Scheduled time (optional)" htmlFor={schedId}>
+            <Field label="Schedule slot (optional)" htmlFor={schedId}>
               <Input
                 id={schedId}
                 type="datetime-local"
@@ -238,44 +227,45 @@ export function PublishView() {
           </form>
         </div>
 
-        {/* Right: Queue items */}
-        <div className="animate-rise rise-2 flex flex-col gap-4 lg:col-span-8">
+        <div className="flex flex-col gap-4 lg:col-span-8">
           {items.length === 0 ? (
             <EmptyState
               icon={<Send aria-hidden />}
               title="No posts awaiting review"
-              body="Run a Supercomputer Agent campaign or add a manual draft to review and schedule via Postiz."
+              body="Run a Supercomputer campaign or queue a render from Library to review and schedule via Postiz."
             />
           ) : (
             items.map((item) => (
               <article
                 key={item.id}
-                className="rounded-xl border border-ink-700 bg-ink-900 p-4 sm:p-5"
+                className="rounded-2xl border border-white/[0.08] bg-[#0b0b0c] p-5"
               >
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-xs uppercase text-lime-400">{item.platform}</span>
-                  <span className="font-mono text-xs text-ink-400">{shortId(item.id)}</span>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="text-[12px] font-bold text-white uppercase">
+                    {item.platform}
+                  </span>
+                  <span className="font-mono text-[11px] text-white/40">{shortId(item.id)}</span>
                   <span
-                    className={`rounded-full border px-2.5 py-0.5 font-mono text-[11px] ${
+                    className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
                       item.approvalStatus === "approved"
-                        ? "border-lime-400/30 bg-lime-400/10 text-lime-400"
+                        ? "bg-[#d1fe17]/15 text-[#d1fe17]"
                         : item.approvalStatus === "rejected"
-                          ? "border-danger/30 bg-danger/10 text-danger"
-                          : "border-amber/30 bg-amber/10 text-amber"
+                          ? "bg-danger/15 text-danger"
+                          : "bg-amber/15 text-amber"
                     }`}
                   >
                     {item.approvalStatus}
                   </span>
-                  <span className="ml-auto font-mono text-[11px] text-ink-400">
-                    publish: {item.publishStatus}
+                  <span className="ml-auto font-mono text-[11px] text-white/45">
+                    {item.publishStatus}
                   </span>
                 </div>
 
-                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink-100">
+                <p className="mt-3 whitespace-pre-line text-[13px] leading-relaxed text-white/85">
                   {item.caption}
                 </p>
                 {item.hashtags.length > 0 && (
-                  <p className="mt-2 font-mono text-xs text-ink-400">
+                  <p className="mt-2 text-[12px] text-white/45">
                     {item.hashtags.map((h) => `#${h.replace(/^#/, "")}`).join(" ")}
                   </p>
                 )}
@@ -288,32 +278,17 @@ export function PublishView() {
                         href={`/api/assets/${mp}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="rounded-md border border-ink-700 bg-ink-850 px-2.5 py-1 font-mono text-[11px] text-lime-400 hover:border-ink-600"
+                        className="rounded-lg bg-white/[0.06] px-2.5 py-1 font-mono text-[11px] text-white/80 hover:bg-white/[0.1]"
                       >
-                        media: {mp}
+                        {mp}
                       </a>
                     ))}
                   </div>
                 )}
 
-                {item.scheduledAt && (
-                  <p className="mt-2 font-mono text-[11px] text-ink-400">
-                    slot: {item.scheduledAt}
-                  </p>
-                )}
-                {item.approvedBy && (
-                  <p className="mt-1 font-mono text-[11px] text-ink-300">
-                    approved by {item.approvedBy}
-                  </p>
-                )}
-                {item.postizPostId && (
-                  <p className="mt-1 font-mono text-[11px] text-lime-400">
-                    postiz_id: {item.postizPostId}
-                  </p>
-                )}
-                {item.error && <p className="mt-2 font-mono text-xs text-danger">{item.error}</p>}
+                {item.error && <p className="mt-2 text-[12px] text-danger">{item.error}</p>}
 
-                <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-ink-800 pt-3">
+                <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/[0.07] pt-3.5">
                   {integrations.length > 0 && item.approvalStatus !== "approved" && (
                     <Select
                       aria-label="Postiz Channel"

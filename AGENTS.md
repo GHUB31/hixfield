@@ -1,4 +1,4 @@
-# Vyolab Studio — Repository Agent Instructions
+# EVIE-LABS — Repository Agent Instructions
 
 ## Ownership & Architecture
 
